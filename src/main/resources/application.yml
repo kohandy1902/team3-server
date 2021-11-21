@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: local
+app:
+  jwt:
+    jwt-secret-key: wafflestudio
+    jwt-expiration-in-ms: 10800000
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC
+    username: waffle-team3
+    password: Wafflestudio!
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      # create: 시작 시 테이블 drop 후 재생성
+      # update: 시작 시 자동 migrate
+      # none: db 그대로
+      # create-drop: 시작 시 테이블 create, 종료 시 drop
+    show-sql: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://waffle-team3-rds.cbxrkb1vkc2n.ap-northeast-2.rds.amazonaws.com:3306/instagram?serverTimezone=UTC
+    username: waffle-team3
+    password: Wafflestudio!
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
