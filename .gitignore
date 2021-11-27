@@ -38,3 +38,6 @@ out/
 
 ### db info ###
 src/main/resources/application-dbInfo.yml
+
+.log
+.out
