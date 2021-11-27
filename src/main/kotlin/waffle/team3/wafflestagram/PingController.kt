@@ -12,5 +12,4 @@ class PingController {
     fun ping(): String {
         return "pong"
     }
-
 }

@@ -9,5 +9,4 @@ class WafflestagramApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

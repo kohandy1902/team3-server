@@ -12,9 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-class SecurityConfig(
-
-): WebSecurityConfigurerAdapter() {
+class SecurityConfig() : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
         super.configure(auth)
