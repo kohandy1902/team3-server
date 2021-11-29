@@ -5,6 +5,7 @@ import javax.persistence.*
 
 @Entity
 class Photo(
-    @Lob
-    var photo: ByteArray,
+    val s3path : String,
+    // need public key to access private photos?
+
 ) : BaseTimeEntity()
