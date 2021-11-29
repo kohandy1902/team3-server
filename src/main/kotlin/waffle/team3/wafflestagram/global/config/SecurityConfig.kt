@@ -12,9 +12,13 @@ import org.springframework.security.config.http.SessionCreationPolicy
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
+<<<<<<< HEAD
 class SecurityConfig(
 
 ): WebSecurityConfigurerAdapter() {
+=======
+class SecurityConfig() : WebSecurityConfigurerAdapter() {
+>>>>>>> f4a7ec03736c65f37d7653438586830f25ff7a0e
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
         super.configure(auth)
@@ -28,4 +32,8 @@ class SecurityConfig(
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/api/v1/ping").permitAll()
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f4a7ec03736c65f37d7653438586830f25ff7a0e
