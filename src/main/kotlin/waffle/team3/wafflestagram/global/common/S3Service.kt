@@ -17,7 +17,7 @@ class S3Service(
     private val s3Client: AmazonS3
 ) {
 
-    @Value("\${cloud.aws.s3.bucket}")
+    @Value("\${aws.s3.bucket}")
     lateinit var bucket: String
 
     /**
