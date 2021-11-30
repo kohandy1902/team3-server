@@ -39,3 +39,10 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
+
+aws:
+  accessKey: ${S3_ACCESSKEY}
+  secretKey: ${S3_SECRETKEY}
+  s3:
+    bucket: ${S3_BUCKET_NAME}
+    region: ${S3_REGION}
