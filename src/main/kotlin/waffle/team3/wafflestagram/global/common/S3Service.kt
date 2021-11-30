@@ -26,7 +26,7 @@ class S3Service(
      */
     @Throws(AmazonServiceException::class)
     fun upload(username: String, feedCnt: Int, file: MultipartFile): String {
-        if (!getUser(username)) throw UserDoesNotExistException()
+        // if (!getUser(username)) throw UserDoesNotExistException()
 
         val fileName = username + feedCnt
         val objMeta = ObjectMetadata()
@@ -45,7 +45,7 @@ class S3Service(
     }
 
     fun getList(username: String) {
-        if (!getUser(username)) throw UserDoesNotExistException()
+        // if (!getUser(username)) throw UserDoesNotExistException()
 
         val list = s3Client.listObjectsV2(bucket)
         for (obj in list.objectSummaries) {
