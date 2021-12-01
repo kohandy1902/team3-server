@@ -28,9 +28,7 @@ spring:
   config:
     activate:
       on-profile: dev
-  profiles:
-    include:
-      - dbInfo
+    additional-location: classpath:application-dbInfo.yml
   datasource:
     url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}?serverTimezone=UTC
     username: ${RDS_USERNAME}
