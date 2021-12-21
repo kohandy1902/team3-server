@@ -24,6 +24,11 @@ class SecurityConfig() : WebSecurityConfigurerAdapter() {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/api/v1/ping").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/v1/ping/").permitAll()
+            .antMatchers(
+                "/swagger-resources/**",
+                "/swagger-ui.html",
+                "/v3/api-docs",
+                "/webjars/**").permitAll()
     }
 }
