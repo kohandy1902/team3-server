@@ -4,7 +4,8 @@ import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Photo.model.Photo
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.model.BaseTimeEntity
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.OneToMany
 
 @Entity
 class Feed(

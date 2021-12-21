@@ -1,9 +1,10 @@
 HELP.md
-.gradle
+.gradle/**
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+scripts/
 
 ### STS ###
 .apt_generated
@@ -38,6 +39,9 @@ out/
 
 ### db info ###
 src/main/resources/application-dbInfo.yml
+
+### social login info ###
+src/main/resources/application.properties
 
 .log
 .out
