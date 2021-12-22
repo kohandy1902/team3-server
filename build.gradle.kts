@@ -40,6 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("org.hibernate.validator:hibernate-validator")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.2")
 }
 
 tasks.withType<KotlinCompile> {
