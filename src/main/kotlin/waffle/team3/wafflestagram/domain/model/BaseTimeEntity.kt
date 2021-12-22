@@ -9,8 +9,8 @@ import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-//@EntityListeners(AuditingEntityListener::class)
-open class BaseTimeEntity (
+// @EntityListeners(AuditingEntityListener::class)
+open class BaseTimeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

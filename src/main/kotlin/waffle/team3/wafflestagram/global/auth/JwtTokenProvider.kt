@@ -1,6 +1,11 @@
 package waffle.team3.wafflestagram.global.auth
 
-import io.jsonwebtoken.*
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.SignatureException
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.UnsupportedJwtException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -9,7 +14,7 @@ import org.springframework.stereotype.Component
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
 import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
-import java.util.*
+import java.util.Date
 
 @Component
 class JwtTokenProvider(private val userRepository: UserRepository) {
@@ -60,7 +65,7 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
     }
 
     fun validateToken(authToken: String?): Boolean {
-        if(authToken.isNullOrEmpty()){
+        if (authToken.isNullOrEmpty()) {
             logger.error("Token is not provided")
             return false
         }
@@ -89,5 +94,4 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
     fun removePrefix(tokenWithPrefix: String): String {
         return tokenWithPrefix.replace(tokenPrefix, "").trim { it <= ' ' }
     }
-
 }

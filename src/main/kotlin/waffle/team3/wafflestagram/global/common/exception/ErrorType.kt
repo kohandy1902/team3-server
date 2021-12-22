@@ -1,6 +1,6 @@
 package waffle.team3.wafflestagram.global.common.exception
 
-enum class ErrorType (
+enum class ErrorType(
     val code: Int
 ) {
     INVALID_REQUEST(0),

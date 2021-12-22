@@ -24,5 +24,4 @@ class SurveyControllerAdvice() {
     @ExceptionHandler(value = [ConflictException::class])
     fun conflict(e: WaffleException) =
         ResponseEntity(ErrorResponse(e.errorType.code, e.errorType.name, e.detail), HttpStatus.CONFLICT)
-
 }

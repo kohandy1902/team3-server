@@ -14,12 +14,11 @@ import waffle.team3.wafflestagram.global.oauth.OauthToken
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
 import waffle.team3.wafflestagram.global.oauth.exception.InvalidArgException
 
-
 @Component
 class FacebookOauth(
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,
-): SocialOauth {
+) : SocialOauth {
     @Value("\${facebook.url}")
     private val facebook_base_auth_url: String? = null
 
@@ -45,7 +44,7 @@ class FacebookOauth(
         paramMap.put("response_type", "code")
         paramMap.put("client_id", facebook_client_id)
         paramMap.put("redirect_uri", facebook_callback_url)
-        val parameterString = paramMap.map{it.key + '=' + it.value}.joinToString("&")
+        val parameterString = paramMap.map { it.key + '=' + it.value }.joinToString("&")
         return facebook_base_auth_url + "?" + parameterString
     }
 
@@ -60,7 +59,7 @@ class FacebookOauth(
         paramMap.put("grant_type", "authorization_code")
 
         val responseEntity = restTemplate.postForEntity(facebook_base_token_auth_url!!, paramMap, String::class.java)
-        if(responseEntity.statusCode == HttpStatus.OK) {
+        if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
             println(hashmap)
             return OauthToken(
@@ -70,8 +69,7 @@ class FacebookOauth(
                 token_type = hashmap["token_type"].toString(),
                 id_token = hashmap["id_token"].toString()
             )
-        }
-        else throw AccessTokenException("Access token Failed")
+        } else throw AccessTokenException("Access token Failed")
     }
 
     @Override
@@ -82,10 +80,9 @@ class FacebookOauth(
         val request = HttpEntity<Map<String, String>>(headers)
         val responseEntity = restTemplate.exchange(facebook_userinfo_url!!, HttpMethod.GET, request, String::class.java)
         println(responseEntity.body)
-        if(responseEntity.statusCode == HttpStatus.OK) {
+        if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
             return userRepository.findByEmail(hashmap["email"].toString()) ?: throw InvalidArgException("No User corresponding to this facebook email")
-        }
-        else throw AccessTokenException("Get user profile failed")
+        } else throw AccessTokenException("Get user profile failed")
     }
 }

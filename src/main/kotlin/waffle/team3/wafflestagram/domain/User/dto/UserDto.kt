@@ -1,7 +1,6 @@
 package waffle.team3.wafflestagram.domain.User.dto
 
 import waffle.team3.wafflestagram.domain.User.model.User
-import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 
 class UserDto {

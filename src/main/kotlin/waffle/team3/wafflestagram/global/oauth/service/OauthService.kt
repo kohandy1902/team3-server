@@ -14,22 +14,22 @@ class OauthService(
     private val facebookOauth: FacebookOauth,
     private val response: HttpServletResponse,
 ) {
-    fun request(socialLoginType: SocialLoginType){
+    fun request(socialLoginType: SocialLoginType) {
         var redirectURL: String
-        when(socialLoginType){
+        when (socialLoginType) {
             SocialLoginType.google -> redirectURL = googleOauth.getOauthRedirectURL()
             SocialLoginType.facebook -> redirectURL = facebookOauth.getOauthRedirectURL()
             else -> throw InvalidArgException("Invalid Social Login format")
         }
-        try{
+        try {
             response.sendRedirect(redirectURL)
-        } catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
     }
 
     fun requestAccessToken(socialLoginType: SocialLoginType, code: String): OauthToken {
-        when(socialLoginType){
+        when (socialLoginType) {
             SocialLoginType.google -> return googleOauth.requestAccessToken(code)
             SocialLoginType.facebook -> return facebookOauth.requestAccessToken(code)
             else -> throw InvalidArgException("Invalid Social Login format")
@@ -37,7 +37,7 @@ class OauthService(
     }
 
     fun findUser(socialLoginType: SocialLoginType, token: OauthToken): User {
-        when(socialLoginType){
+        when (socialLoginType) {
             SocialLoginType.google -> return googleOauth.findUser(token)
             SocialLoginType.facebook -> return facebookOauth.findUser(token)
             else -> throw InvalidArgException("Invalid Social Login format")

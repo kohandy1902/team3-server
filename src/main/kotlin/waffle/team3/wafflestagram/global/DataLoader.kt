@@ -7,9 +7,9 @@ import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 
 @Component
-class DataLoader (
+class DataLoader(
     private val userRepository: UserRepository
-        ): ApplicationRunner {
+) : ApplicationRunner {
     // 어플리케이션 동작 시 실행
     override fun run(args: ApplicationArguments) {
         val newUser0 = User(email = "2harry@snu.ac.kr")

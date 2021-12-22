@@ -13,9 +13,10 @@ class UserService(
 ) {
     fun signup(signupRequest: UserDto.SignupRequest): User {
         return userRepository.save(
-            User(email = signupRequest.email,
+            User(
+                email = signupRequest.email,
                 password = passwordEncoder.encode(signupRequest.password)
-                )
+            )
         )
     }
 }

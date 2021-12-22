@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.global.auth.model
 
-
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 

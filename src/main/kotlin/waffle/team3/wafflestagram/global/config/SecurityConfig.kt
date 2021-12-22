@@ -2,7 +2,6 @@ package waffle.team3.wafflestagram.global.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -33,7 +32,6 @@ class SecurityConfig(
     private val userPrincipalDetailService: UserPrincipalDetailService
 ) : WebSecurityConfigurerAdapter() {
 
-
     override fun configure(auth: AuthenticationManagerBuilder?) {
         super.configure(auth)
     }
@@ -61,13 +59,14 @@ class SecurityConfig(
             .and()
             .addFilter(SigninAuthenticationFilter(authenticationManager(), jwtTokenProvider))
             .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider))
-            .authorizeRequests(){ a->
-                a.antMatchers("/api/v1/ping/", "/api/v1/users/signin/", "/api/v1/users/signup/"
-                            , "/api/v1/social_login/**").permitAll()
-                    .anyRequest().authenticated()
+            .authorizeRequests() { a ->
+                a.antMatchers(
+                    "/api/v1/ping/", "/api/v1/users/signin/", "/api/v1/users/signup/",
+                    "/api/v1/social_login/**"
+                ).permitAll().anyRequest().authenticated()
             }
-            .exceptionHandling{ e-> e.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))}
-            .oauth2Login{ o->
+            .exceptionHandling { e -> e.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
+            .oauth2Login { o ->
                 o.failureHandler { request: HttpServletRequest, response: HttpServletResponse?, exception: AuthenticationException ->
                     request.session.setAttribute("error.message", exception.message)
                     val handler: AuthenticationEntryPointFailureHandler? = null

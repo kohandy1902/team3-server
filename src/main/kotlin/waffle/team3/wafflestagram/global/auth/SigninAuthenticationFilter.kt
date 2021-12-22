@@ -1,8 +1,6 @@
 package waffle.team3.wafflestagram.global.auth
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -38,7 +36,7 @@ class SigninAuthenticationFilter(
         response: HttpServletResponse,
         failed: AuthenticationException
     ) {
-        super.unsuccessfulAuthentication(request, response, failed);
+        super.unsuccessfulAuthentication(request, response, failed)
         response.status = HttpServletResponse.SC_UNAUTHORIZED
     }
 
@@ -54,5 +52,4 @@ class SigninAuthenticationFilter(
         val objectMapper = jacksonObjectMapper()
         return objectMapper.readValue(reader, LoginRequest::class.java)
     }
-
 }
