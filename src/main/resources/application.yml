@@ -4,7 +4,7 @@ spring:
     include: google
 app:
   jwt:
-    jwt-secret-key: wafflestudio
+    jwt-secret-key: jwt.secret.key
     jwt-expiration-in-ms: 10800000
 ---
 
