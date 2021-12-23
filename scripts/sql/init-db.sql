@@ -1,3 +1,4 @@
 CREATE DATABASE instagram;
-CREATE USER 'waffle-team3'@'localhost' IDENTIFIED BY 'Wafflestudio!';
-GRANT ALL PRIVILEGES ON instagram.* TO 'waffle-team3'@'localhost';
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON instagram.* TO 'username'@'localhost';
+
