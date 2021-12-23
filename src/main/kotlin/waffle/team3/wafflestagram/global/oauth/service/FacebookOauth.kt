@@ -12,7 +12,6 @@ import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.oauth.OauthToken
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
-import waffle.team3.wafflestagram.global.oauth.exception.InvalidArgException
 
 @Component
 class FacebookOauth(
@@ -82,7 +81,7 @@ class FacebookOauth(
         println(responseEntity.body)
         if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
-            return userRepository.findByEmail(hashmap["email"].toString()) ?: throw InvalidArgException("No User corresponding to this facebook email")
+            return userRepository.findByEmail(hashmap["email"].toString()) ?: userRepository.save(User(email = hashmap["email"].toString()))
         } else throw AccessTokenException("Get user profile failed")
     }
 }
