@@ -11,8 +11,10 @@ import javax.persistence.OneToMany
 class Feed(
     @OneToMany
     var photos: MutableList<Photo> = mutableListOf(),
-    @OneToMany
+
+    @OneToMany(mappedBy = "feed")
     var comments: MutableList<Comment> = mutableListOf(),
+
     @OneToMany
     var likes: MutableList<User> = mutableListOf(),
 ) : BaseTimeEntity()
