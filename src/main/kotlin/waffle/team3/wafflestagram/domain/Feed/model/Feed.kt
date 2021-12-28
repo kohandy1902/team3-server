@@ -9,8 +9,11 @@ import javax.persistence.OneToMany
 
 @Entity
 class Feed(
+    var content: String,
+
     @OneToMany
-    var photos: MutableList<Photo> = mutableListOf(),
+    var tags: MutableList<User> = mutableListOf(),
+
     @OneToMany
     var comments: MutableList<Comment> = mutableListOf(),
     @OneToMany
