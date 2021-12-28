@@ -1,17 +1,22 @@
 spring:
   profiles:
     active: local
-
+    include: google
+app:
+  jwt:
+    jwt-secret-key: jwt.secret.key
+    jwt-expiration-in-ms: 10800000
 ---
 
 spring:
   config:
     activate:
       on-profile: local
+    additional-location: classpath:application-dbInfo.yml
   datasource:
     url: jdbc:mysql://localhost:3306/instagram?serverTimezone=UTC
-    username: username
-    password: password
+    username: waffle-team3
+    password: Wafflestudio!
   jpa:
     generate-ddl: true
     hibernate:
@@ -21,6 +26,20 @@ spring:
       # none: db 그대로
       # create-drop: 시작 시 테이블 create, 종료 시 drop
     show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: google.client.id
+            clientSecret: google.client.secret
+            scope: profile
+            response_type: code
+          facebook:
+            clientId: facebook.client.id
+            facebookSecret: facebook.client.secret
+            scope: profile
+
 
 ---
 
@@ -28,9 +47,7 @@ spring:
   config:
     activate:
       on-profile: dev
-  profiles:
-    include:
-      - dbInfo
+    additional-location: classpath:application-dbInfo.yml
   datasource:
     url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}?serverTimezone=UTC
     username: ${RDS_USERNAME}
@@ -39,7 +56,14 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            
 aws:
   accessKey: ${S3_ACCESSKEY}
   secretKey: ${S3_SECRETKEY}
