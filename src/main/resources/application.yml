@@ -63,3 +63,10 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
+            
+aws:
+  accessKey: ${S3_ACCESSKEY}
+  secretKey: ${S3_SECRETKEY}
+  s3:
+    bucket: ${S3_BUCKET_NAME}
+    endpoint: ${S3_ENDPOINT}
