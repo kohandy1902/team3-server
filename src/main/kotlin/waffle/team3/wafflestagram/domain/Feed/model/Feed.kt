@@ -11,6 +11,9 @@ import javax.persistence.OneToMany
 class Feed(
     @OneToMany
     var photos: MutableList<Photo> = mutableListOf(),
+
+    var content: String,
+
     @OneToMany
     var comments: MutableList<Comment> = mutableListOf(),
     @OneToMany
