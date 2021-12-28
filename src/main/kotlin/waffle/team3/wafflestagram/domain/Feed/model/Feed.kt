@@ -12,7 +12,7 @@ class Feed(
     var content: String,
 
     @OneToMany
-    val tags: MutableList<User> = mutableListOf(),
+    var tags: MutableList<User> = mutableListOf(),
 
     @OneToMany
     var comments: MutableList<Comment> = mutableListOf(),

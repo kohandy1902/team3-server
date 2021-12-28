@@ -18,32 +18,35 @@ class FeedService(
 ) {
 
     // 사람 태그하기, 위치 추가 기능
-    fun create(createRequest: FeedDto.CreateRequest, user: User): Feed {
+    fun upload(uploadRequest: FeedDto.UploadRequest, user: User): Feed {
         return feedRepository.save(
             Feed(
-                createRequest.content,
-                createRequest.tags
+                uploadRequest.content,
+                uploadRequest.tags
             )
         )
     }
 
-    fun update(updateRequest: FeedDto.UpdateRequest, user: User): Feed {
-        return feedRepository.save(
-            Feed(
-                updateRequest.content,
-                updateRequest.tags
-            )
-        )
+    fun update(id: Long, updateRequest: FeedDto.UpdateRequest, user: User): Feed {
+        val feed = feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+
+        feed.apply {
+            updateRequest.content.let { content = it }
+            updateRequest.tags.let { tags = it }
+        }
+
+        return feed
     }
 
     fun get(id: Long): Feed {
         return feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
     }
 
-    fun delete(deleteRequest: FeedDto.DeleteRequest, user: User) {
-        return feedRepository.delete(
-            get(deleteRequest.id)
-        )
+    fun delete(id: Long, user: User): Feed {
+        val feed = get(id)
+        feedRepository.delete(feed)
+
+        return feed
     }
 
 
