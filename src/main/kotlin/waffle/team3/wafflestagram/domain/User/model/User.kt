@@ -18,6 +18,8 @@ class User(
     var follower: MutableList<User> = mutableListOf(),
     @OneToMany
     var following: MutableList<User> = mutableListOf(),
+    @OneToMany
+    var waitingFollower: MutableList<User> = mutableListOf(),
     var name: String? = null,
     var nickname: String? = null,
     var website: String? = null,
