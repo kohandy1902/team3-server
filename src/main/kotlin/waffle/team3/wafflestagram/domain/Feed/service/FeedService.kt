@@ -28,22 +28,23 @@ class FeedService(
         }
 
         return feedRepository.save(
-            Feed(
-                uploadRequest.content,
-                tags
-            )
+            Feed(uploadRequest.content, tags)
         )
     }
 
     fun update(id: Long, updateRequest: FeedDto.UpdateRequest, user: User): Feed {
         val feed = feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        val tags: MutableList<User> = mutableListOf()
 
-        feed.apply {
-            updateRequest.content.let { content = it }
-            updateRequest.tags.let { tags = it }
+        for (nickname: String in updateRequest.tags) {
+            val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
+            tags.add(user)
         }
 
-        return feed
+        return feed.apply {
+            updateRequest.content.let { content = it }
+            tags.let { this.tags = it }
+        }
     }
 
     fun get(id: Long): Feed {
