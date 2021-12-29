@@ -2,29 +2,30 @@ package waffle.team3.wafflestagram.global.common
 
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.services.s3.AmazonS3
+import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.util.IOUtils
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
-import kotlin.jvm.Throws
+import java.sql.DriverManager.println
 
 @Service
 class S3Service(
     private val s3Client: AmazonS3
 ) {
 
-    @Value("\${aws.s3.bucket}")
+    @Value("\${cloud.aws.s3.bucket}")
     lateinit var bucket: String
 
     /**
      * When feedService calls this function,
      * you should deliver username, feedCnt for making fileName and counting
      */
-    @Throws(AmazonServiceException::class)
     fun upload(username: String, feedCnt: Int, file: MultipartFile): String {
         // if (!getUser(username)) throw UserDoesNotExistException()
 
@@ -53,7 +54,6 @@ class S3Service(
         }
     }
 
-    @Throws(AmazonServiceException::class)
     fun deleteObj(objectKey: String) {
         s3Client.deleteObject(bucket, objectKey)
     }
