@@ -42,11 +42,9 @@ class FeedService(
         return feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
     }
 
-    fun delete(id: Long, user: User): Feed {
+    fun delete(id: Long, user: User) {
         val feed = get(id)
         feedRepository.delete(feed)
-
-        return feed
     }
 
 

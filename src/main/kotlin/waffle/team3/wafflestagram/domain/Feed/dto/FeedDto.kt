@@ -1,5 +1,6 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
+import org.springframework.lang.Nullable
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.User.model.User
@@ -23,15 +24,11 @@ class FeedDto {
 
     data class UploadRequest(
         val content: String,
-        val tags: MutableList<User>
+        val tags: MutableList<User> = mutableListOf()
     )
 
     data class UpdateRequest(
         val content: String,
-        val tags: MutableList<User>
-    )
-
-    data class DeleteRequest(
-        val id: Long
+        val tags: MutableList<User> = mutableListOf()
     )
 }

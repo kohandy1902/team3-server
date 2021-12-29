@@ -13,7 +13,7 @@ import javax.validation.Valid
 class FeedController(
     private val feedService: FeedService,
 ) {
-    @PostMapping("")
+    @PostMapping("/")
     fun upload(@Valid @RequestBody uploadRequest: FeedDto.UploadRequest, @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
         val feed = feedService.upload(uploadRequest, user)
         return ResponseEntity
@@ -21,7 +21,7 @@ class FeedController(
             .body(FeedDto.Response(feed))
     }
 
-    @PostMapping("/{feed_id}")
+    @PutMapping("/{feed_id}/")
     fun update(@PathVariable("feed_id") feedId: Long,
                @Valid @RequestBody updateRequest: FeedDto.UpdateRequest,
                @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
@@ -31,11 +31,10 @@ class FeedController(
             .body(FeedDto.Response(feed))
     }
 
-    @DeleteMapping("/{feed_id}")
+    @DeleteMapping("/{feed_id}/")
     fun delete(@PathVariable("feed_id") feedId: Long,
-               @CurrentUser user: User): FeedDto.Response {
-        val feed = feedService.delete(feedId, user)
-        return FeedDto.Response(feed)
+               @CurrentUser user: User) {
+        feedService.delete(feedId, user)
     }
 
 }
