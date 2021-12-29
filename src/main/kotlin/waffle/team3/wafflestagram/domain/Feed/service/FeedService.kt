@@ -9,13 +9,16 @@ import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
+import waffle.team3.wafflestagram.global.s3.controller.S3Controller
+import waffle.team3.wafflestagram.global.s3.service.S3Service
 import javax.transaction.Transactional
 
 @Service
 @Transactional
 class FeedService(
     private val feedRepository: FeedRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val s3Controller: S3Controller
 ) {
 
     // 사람 태그하기, 위치 추가 기능
@@ -28,7 +31,7 @@ class FeedService(
         }
 
         return feedRepository.save(
-            Feed(uploadRequest.content, tags)
+            Feed(content = uploadRequest.content, tags = tags)
         )
     }
 
@@ -53,6 +56,11 @@ class FeedService(
 
     fun delete(id: Long, user: User) {
         val feed = get(id)
+        val photoKeys = feed.photoKeys.split(",")
+        for (photoKey: String in photoKeys) {
+            s3Controller.deletePhoto(photoKey)
+        }
+
         feedRepository.delete(feed)
     }
 }

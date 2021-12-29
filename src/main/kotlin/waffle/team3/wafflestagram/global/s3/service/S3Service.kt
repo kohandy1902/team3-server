@@ -1,4 +1,4 @@
-package waffle.team3.wafflestagram.global.common
+package waffle.team3.wafflestagram.global.s3.service
 
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.CannedAccessControlList
@@ -23,8 +23,8 @@ class S3Service(
      * When feedService calls this function,
      * you should deliver username, feedCnt for making fileName and counting
      */
-    fun upload(username: String, feedCnt: Int, file: MultipartFile): String {
-        // if (!getUser(username)) throw UserDoesNotExistException()
+    /** fun upload(username: String, feedCnt: Int, file: MultipartFile): String {
+
 
         val fileName = username + feedCnt
         val objMeta = ObjectMetadata()
@@ -50,6 +50,7 @@ class S3Service(
             println(obj.key)
         }
     }
+    **/
 
     fun deleteObj(objectKey: String) {
         s3Client.deleteObject(bucket, objectKey)
