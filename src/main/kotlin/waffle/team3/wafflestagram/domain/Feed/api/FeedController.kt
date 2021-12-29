@@ -2,6 +2,7 @@ package waffle.team3.wafflestagram.domain.Feed.api
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -36,6 +37,14 @@ class FeedController(
         val feed = feedService.update(feedId, updateRequest, user)
         return ResponseEntity
             .status(201)
+            .body(FeedDto.Response(feed))
+    }
+
+    @GetMapping("/{feed_id}")
+    fun getFeedById(@PathVariable("feed_id") feedId: Long): ResponseEntity<FeedDto.Response> {
+        val feed = feedService.get(feedId)
+        return ResponseEntity
+            .status(200)
             .body(FeedDto.Response(feed))
     }
 
