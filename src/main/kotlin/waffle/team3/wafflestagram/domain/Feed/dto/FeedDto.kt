@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
-import org.springframework.lang.Nullable
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.User.model.User
@@ -13,7 +12,7 @@ class FeedDto {
         val comments: MutableList<Comment>,
         val likes: MutableList<User>,
     ) {
-        constructor(feed: Feed): this(
+        constructor(feed: Feed) : this(
             id = feed.id,
             content = feed.content,
             tags = feed.tags,
@@ -24,11 +23,11 @@ class FeedDto {
 
     data class UploadRequest(
         val content: String,
-        val tags: MutableList<User> = mutableListOf()
+        val tags: MutableList<String> = mutableListOf()
     )
 
     data class UpdateRequest(
         val content: String,
-        val tags: MutableList<User> = mutableListOf()
+        val tags: MutableList<String> = mutableListOf()
     )
 }

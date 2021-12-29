@@ -1,7 +1,13 @@
 package waffle.team3.wafflestagram.domain.Feed.api
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
 import waffle.team3.wafflestagram.domain.Feed.service.FeedService
 import waffle.team3.wafflestagram.domain.User.model.User
@@ -22,9 +28,11 @@ class FeedController(
     }
 
     @PutMapping("/{feed_id}/")
-    fun update(@PathVariable("feed_id") feedId: Long,
-               @Valid @RequestBody updateRequest: FeedDto.UpdateRequest,
-               @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
+    fun update(
+        @PathVariable("feed_id") feedId: Long,
+        @Valid @RequestBody updateRequest: FeedDto.UpdateRequest,
+        @CurrentUser user: User
+    ): ResponseEntity<FeedDto.Response> {
         val feed = feedService.update(feedId, updateRequest, user)
         return ResponseEntity
             .status(201)
@@ -32,9 +40,10 @@ class FeedController(
     }
 
     @DeleteMapping("/{feed_id}/")
-    fun delete(@PathVariable("feed_id") feedId: Long,
-               @CurrentUser user: User) {
+    fun delete(
+        @PathVariable("feed_id") feedId: Long,
+        @CurrentUser user: User
+    ) {
         feedService.delete(feedId, user)
     }
-
 }

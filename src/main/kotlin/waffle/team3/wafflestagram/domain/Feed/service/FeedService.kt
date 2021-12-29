@@ -6,6 +6,7 @@ import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
 import waffle.team3.wafflestagram.domain.Feed.exception.FeedDoesNotExistException
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
+import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import javax.transaction.Transactional
@@ -19,10 +20,17 @@ class FeedService(
 
     // 사람 태그하기, 위치 추가 기능
     fun upload(uploadRequest: FeedDto.UploadRequest, user: User): Feed {
+        val tags: MutableList<User> = mutableListOf()
+
+        for (nickname: String in uploadRequest.tags) {
+            val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
+            tags.add(user)
+        }
+
         return feedRepository.save(
             Feed(
                 uploadRequest.content,
-                uploadRequest.tags
+                tags
             )
         )
     }
@@ -46,6 +54,4 @@ class FeedService(
         val feed = get(id)
         feedRepository.delete(feed)
     }
-
-
 }

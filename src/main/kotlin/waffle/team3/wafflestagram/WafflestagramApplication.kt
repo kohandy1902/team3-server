@@ -10,12 +10,12 @@ import org.springframework.context.annotation.PropertySources
 @ConfigurationPropertiesScan
 @PropertySources(
     *[
-    PropertySource("classpath:application-s3.properties"),
-    PropertySource("classpath:application-oauth.properties")
-])
-    class WafflestagramApplication
+        PropertySource("classpath:application-s3.properties"),
+        PropertySource("classpath:application-oauth.properties")
+    ]
+)
+class WafflestagramApplication
 
-    fun main(args: Array<String>) {
-        runApplication<WafflestagramApplication>(*args)
-    }
-
+fun main(args: Array<String>) {
+    runApplication<WafflestagramApplication>(*args)
+}
