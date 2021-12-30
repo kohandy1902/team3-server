@@ -7,5 +7,4 @@ import javax.persistence.Entity
 class Photo(
     val s3path: String,
     // need public key to access private photos?
-
 ) : BaseTimeEntity()
