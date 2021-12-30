@@ -1,5 +1,8 @@
 package waffle.team3.wafflestagram.domain.Feed.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
@@ -10,7 +13,7 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.s3.controller.S3Controller
-import waffle.team3.wafflestagram.global.s3.service.S3Service
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
@@ -47,6 +50,7 @@ class FeedService(
         return feed.apply {
             updateRequest.content.let { content = it }
             tags.let { this.tags = it }
+            updatedAt = LocalDateTime.now()
         }
     }
 
@@ -54,12 +58,16 @@ class FeedService(
         return feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
     }
 
+    fun getPage(offset: Int, number: Int): Page<Feed> {
+        return feedRepository.findByOrderByUpdatedAtDesc(PageRequest.of(offset, number))
+    }
+
     fun delete(id: Long, user: User) {
         val feed = get(id)
-        val photoKeys = feed.photoKeys.split(",")
-        for (photoKey: String in photoKeys) {
-            s3Controller.deletePhoto(photoKey)
-        }
+//        val photoKeys = feed.photoKeys.split(",")
+//        for (photoKey: String in photoKeys) {
+//            s3Controller.deletePhoto(photoKey)
+//        }
 
         feedRepository.delete(feed)
     }
