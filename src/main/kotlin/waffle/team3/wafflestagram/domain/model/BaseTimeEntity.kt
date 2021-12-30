@@ -15,11 +15,11 @@ import javax.persistence.MappedSuperclass
 open class BaseTimeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    open val id: Long = 0,
 
     @CreatedDate
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    open var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    open var updatedAt: LocalDateTime? = null
 )

@@ -7,8 +7,10 @@ import javax.persistence.Entity
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
+import javax.persistence.Table
 
 @Entity
+@Table(name = "comments")
 class Comment(
     @ManyToOne
     @JoinColumn(name = "feed_id", referencedColumnName = "id", nullable = true)

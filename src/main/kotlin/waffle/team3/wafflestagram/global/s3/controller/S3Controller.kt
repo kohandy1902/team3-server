@@ -15,5 +15,4 @@ class S3Controller(
     fun deletePhoto(objectKey: String) {
         s3Service.deleteObj(objectKey)
     }
-
 }
