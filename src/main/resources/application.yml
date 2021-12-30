@@ -20,7 +20,7 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
       # create: 시작 시 테이블 drop 후 재생성
       # update: 시작 시 자동 migrate
       # none: db 그대로
@@ -63,10 +63,3 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            
-aws:
-  accessKey: ${S3_ACCESSKEY}
-  secretKey: ${S3_SECRETKEY}
-  s3:
-    bucket: ${S3_BUCKET_NAME}
-    endpoint: ${S3_ENDPOINT}

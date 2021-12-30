@@ -25,7 +25,9 @@ class DataLoader(
         val newUser1 = User(email = "970707zzang@naver.com", password = "1234")
         userRepository.save(newUser0)
         userRepository.save(newUser1)
-        val newFeed = feedRepository.save(Feed())
+        val newFeed = feedRepository.save(
+            Feed(user = newUser0)
+        )
 
         for (i in 0 until 10) {
             val comment = commentRepository.save(

@@ -7,8 +7,10 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
+import javax.persistence.Table
 
 @Entity
+@Table(name = "users")
 class User(
     @Column(unique = true)
     val email: String,
@@ -24,6 +26,6 @@ class User(
     var bio: String? = null,
     @OneToOne
     var profilePhoto: Photo? = null,
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     var feeds: MutableList<Feed> = mutableListOf(),
 ) : BaseTimeEntity()
