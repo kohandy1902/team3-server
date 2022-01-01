@@ -64,7 +64,8 @@ class SecurityConfig(
                     "/api/v1/ping/", "/api/v1/users/signin/", "/api/v1/users/signup/",
                     "/api/v1/social_login/**",
                     "/swagger-resources/**",
-                    "/swagger-ui.html", "/v3/api-docs", "/webjars/**"
+                    "/swagger-ui.html", "/v3/api-docs", "/webjars/**", "/v2/api-docs",
+                    "/swagger-ui/index.html"
                 ).permitAll().anyRequest().authenticated()
             }
             .exceptionHandling { e -> e.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
