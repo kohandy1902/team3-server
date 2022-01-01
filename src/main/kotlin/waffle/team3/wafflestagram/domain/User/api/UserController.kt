@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.model.User
@@ -28,14 +29,25 @@ class UserController(
     private val jwtTokenProvider: JwtTokenProvider
 ) {
     @PostMapping("/signup/")
-    fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<UserDto.Response> {
+    fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<*> {
         val user = userService.signup(signupRequest)
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(null)
     }
 
     @GetMapping("/me/")
-    fun getCurrentUser(@CurrentUser user: User): UserDto.Response {
-        return UserDto.Response(user)
+    fun getme(@CurrentUser user: User): ResponseEntity<UserDto.Response> {
+        return ResponseEntity.ok().body(UserDto.Response(user))
+    }
+
+    @PostMapping("/profile/")
+    fun setProfile(@CurrentUser user: User, @RequestBody profileRequest: UserDto.ProfileRequest) {
+        userService.setProfile(user, profileRequest)
+    }
+
+    @GetMapping("/profile/")
+    fun getProfile(@CurrentUser currentUser: User, @RequestParam("nickname") nickname: String): ResponseEntity<UserDto.Response> {
+        val user = userService.getUser(currentUser, nickname)
+        return ResponseEntity.ok().body(UserDto.Response(user))
     }
 
     @PostMapping("/follow/{id}/")
