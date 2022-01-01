@@ -1,7 +1,6 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
-import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import java.time.LocalDateTime
 
