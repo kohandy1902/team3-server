@@ -26,4 +26,9 @@ class UserService(
     fun getUserById(id: Long): User? {
         return userRepository.findByIdOrNull(id)
     }
+
+    @Transactional
+    fun saveUser(user: User) {
+        userRepository.save(user)
+    }
 }

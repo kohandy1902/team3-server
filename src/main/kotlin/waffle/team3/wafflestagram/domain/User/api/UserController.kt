@@ -42,16 +42,36 @@ class UserController(
     @Transactional
     fun followRequest(
         @CurrentUser user: User,
-        @PathVariable("id") id: Long
+        @PathVariable("id") id: Long // id: User-id
     ): ResponseEntity<UserDto.Response> {
         val followUser = userService.getUserById(id)
         if (followUser == null || user.id == id) return ResponseEntity.badRequest().build()
         if (followUser.public == true) {
             followerUserService.addFollower(followUser, user)
             followingUserService.addFollowing(user, followUser)
+            userService.saveUser(user)
+            userService.saveUser(followUser)
         } else {
             waitingFollowerUserService.addWaitingFollower(followUser, user)
+            userService.saveUser(followUser)
         }
         return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/approve/{id}/")
+    fun approveRequest(
+        @CurrentUser user: User,
+        @PathVariable("id") id: Long // id: User-id
+    ): ResponseEntity<UserDto.Response> {
+        for (waitingFollower in user.waitingFollower) {
+            if (waitingFollower.user.id == id) {
+                followingUserService.addFollowing(waitingFollower.user, user)
+                followerUserService.addFollower(user, waitingFollower.user)
+                user.waitingFollower.remove(waitingFollower)
+                userService.saveUser(user)
+                return ResponseEntity.ok().build()
+            }
+        }
+        return ResponseEntity.badRequest().build()
     }
 }
