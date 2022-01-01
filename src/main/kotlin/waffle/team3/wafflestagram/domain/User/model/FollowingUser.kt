@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "following_users")
-class FollowingUser (
+class FollowingUser(
     @ManyToOne
     @JoinColumn(name = "user_id")
     val user: User,

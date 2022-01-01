@@ -40,15 +40,16 @@ class UserController(
 
     @PostMapping("/follow/{id}/")
     @Transactional
-    fun followRequest(@CurrentUser user: User,
-                      @PathVariable("id") id: Long): ResponseEntity<UserDto.Response> {
+    fun followRequest(
+        @CurrentUser user: User,
+        @PathVariable("id") id: Long
+    ): ResponseEntity<UserDto.Response> {
         val followUser = userService.getUserById(id)
-        if(followUser == null || user.id == id) return ResponseEntity.badRequest().build()
-        if(followUser.public == true) {
+        if (followUser == null || user.id == id) return ResponseEntity.badRequest().build()
+        if (followUser.public == true) {
             followerUserService.addFollower(followUser, user)
             followingUserService.addFollowing(user, followUser)
-        }
-        else {
+        } else {
             waitingFollowerUserService.addWaitingFollower(followUser, user)
         }
         return ResponseEntity.ok().build()
