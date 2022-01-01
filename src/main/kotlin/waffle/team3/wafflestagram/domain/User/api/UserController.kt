@@ -1,12 +1,20 @@
 package waffle.team3.wafflestagram.domain.User.api
 
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.model.User
+import waffle.team3.wafflestagram.domain.User.service.FollowerUserService
+import waffle.team3.wafflestagram.domain.User.service.FollowingUserService
 import waffle.team3.wafflestagram.domain.User.service.UserService
+import waffle.team3.wafflestagram.domain.User.service.WaitingFollowerUserService
+import waffle.team3.wafflestagram.global.auth.CurrentUser
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import javax.validation.Valid
 
@@ -14,11 +22,35 @@ import javax.validation.Valid
 @RequestMapping("/api/v1/users")
 class UserController(
     private val userService: UserService,
+    private val followerUserService: FollowerUserService,
+    private val followingUserService: FollowingUserService,
+    private val waitingFollowerUserService: WaitingFollowerUserService,
     private val jwtTokenProvider: JwtTokenProvider
 ) {
     @PostMapping("/signup/")
     fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<UserDto.Response> {
         val user = userService.signup(signupRequest)
         return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+    }
+
+    @GetMapping("/me/")
+    fun getCurrentUser(@CurrentUser user: User): UserDto.Response {
+        return UserDto.Response(user)
+    }
+
+    @PostMapping("/follow/{id}/")
+    @Transactional
+    fun followRequest(@CurrentUser user: User,
+                      @PathVariable("id") id: Long): ResponseEntity<UserDto.Response> {
+        val followUser = userService.getUserById(id)
+        if(followUser == null || user.id == id) return ResponseEntity.badRequest().build()
+        if(followUser.public == true) {
+            followerUserService.addFollower(followUser, user)
+            followingUserService.addFollowing(user, followUser)
+        }
+        else {
+            waitingFollowerUserService.addWaitingFollower(followUser, user)
+        }
+        return ResponseEntity.ok().build()
     }
 }

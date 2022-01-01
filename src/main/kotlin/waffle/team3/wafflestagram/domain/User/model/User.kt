@@ -17,12 +17,12 @@ class User(
     val email: String,
     val password: String? = null,
     var public: Boolean = true,
-    @OneToMany(fetch = FetchType.LAZY)
-    var follower: MutableList<User> = mutableListOf(),
-    @OneToMany(fetch = FetchType.LAZY)
-    var following: MutableList<User> = mutableListOf(),
-    @OneToMany(fetch = FetchType.LAZY)
-    var waitingFollower: MutableList<User> = mutableListOf(),
+    @OneToMany(fetch = FetchType.EAGER)
+    var follower: MutableSet<FollowerUser> = mutableSetOf(),
+    @OneToMany(fetch = FetchType.EAGER)
+    var following: MutableSet<FollowingUser> = mutableSetOf(),
+    @OneToMany(fetch = FetchType.EAGER)
+    var waitingFollower: MutableSet<WaitingFollowerUser> = mutableSetOf(),
     var name: String? = null,
     var nickname: String? = null,
     var website: String? = null,
