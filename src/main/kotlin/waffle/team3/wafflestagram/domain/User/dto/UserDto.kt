@@ -1,7 +1,5 @@
 package waffle.team3.wafflestagram.domain.User.dto
 
-import waffle.team3.wafflestagram.domain.Feed.model.Feed
-import waffle.team3.wafflestagram.domain.Photo.model.Photo
 import waffle.team3.wafflestagram.domain.User.model.User
 import javax.validation.constraints.NotBlank
 

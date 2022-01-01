@@ -28,7 +28,7 @@ class UserService(
         profileRequest.public?.let { currentUser.public = it }
         profileRequest.name?.let { currentUser.name = it }
         profileRequest.nickname?.let {
-            if(userRepository.findByNickname(profileRequest.nickname) != null) throw UserException("this nickname already exists")
+            if (userRepository.findByNickname(profileRequest.nickname) != null) throw UserException("this nickname already exists")
             else currentUser.nickname = it
         }
         profileRequest.website?.let { currentUser.website = it }
@@ -38,7 +38,7 @@ class UserService(
 
     fun getUser(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
-        if(!user.public){
+        if (!user.public) {
             user.follower.find { it.email == user.email } ?: throw UserException("not public")
         }
         return user
