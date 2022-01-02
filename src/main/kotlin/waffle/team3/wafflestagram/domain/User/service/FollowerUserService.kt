@@ -1,5 +1,7 @@
 package waffle.team3.wafflestagram.domain.User.service
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import waffle.team3.wafflestagram.domain.User.model.FollowerUser
@@ -15,5 +17,9 @@ class FollowerUserService(
         val followerUser = FollowerUser(follower)
         user.follower.add(followerUser)
         followerUserRepository.save(followerUser)
+    }
+
+    fun getPage(offset: Int, number: Int): Page<FollowerUser> {
+        return followerUserRepository.findByOrderByCreatedAtDesc(PageRequest.of(offset, number))
     }
 }
