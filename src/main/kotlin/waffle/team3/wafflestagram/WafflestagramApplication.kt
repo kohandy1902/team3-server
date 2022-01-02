@@ -13,7 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @PropertySources(
     *[
         PropertySource("classpath:application-s3.properties"),
-        PropertySource("classpath:application-oauth.properties")
+        PropertySource("classpath:application-oauth.properties"),
+        PropertySource("classpath:application-dbInfo.properties")
     ]
 )
 class WafflestagramApplication
