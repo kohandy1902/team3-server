@@ -35,7 +35,7 @@ class UserController(
     }
 
     @GetMapping("/me/")
-    fun getme(@CurrentUser user: User): ResponseEntity<UserDto.Response> {
+    fun getMe(@CurrentUser user: User): ResponseEntity<UserDto.Response> {
         return ResponseEntity.ok().body(UserDto.Response(user))
     }
 
@@ -58,7 +58,7 @@ class UserController(
     ): ResponseEntity<UserDto.Response> {
         val followUser = userService.getUserById(id)
         if (followUser == null || user.id == id) return ResponseEntity.badRequest().build()
-        if (followUser.public == true) {
+        if (followUser.public) {
             followerUserService.addFollower(followUser, user)
             followingUserService.addFollowing(user, followUser)
             userService.saveUser(user)
@@ -79,6 +79,21 @@ class UserController(
             if (waitingFollower.user.id == id) {
                 followingUserService.addFollowing(waitingFollower.user, user)
                 followerUserService.addFollower(user, waitingFollower.user)
+                user.waitingFollower.remove(waitingFollower)
+                userService.saveUser(user)
+                return ResponseEntity.ok().build()
+            }
+        }
+        return ResponseEntity.badRequest().build()
+    }
+
+    @PostMapping("/refuse/{id}/")
+    fun refuseRequest(
+        @CurrentUser user: User,
+        @PathVariable("id") id: Long // id: User-id
+    ): ResponseEntity<UserDto.Response> {
+        for (waitingFollower in user.waitingFollower) {
+            if (waitingFollower.user.id == id) {
                 user.waitingFollower.remove(waitingFollower)
                 userService.saveUser(user)
                 return ResponseEntity.ok().build()
