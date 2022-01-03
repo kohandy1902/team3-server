@@ -17,7 +17,7 @@ class User(
     @Column(unique = true)
     val email: String,
     val password: String? = null,
-    var public: Boolean = false,
+    var public: Boolean = true,
     @OneToMany(fetch = FetchType.EAGER, cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
     var follower: MutableSet<FollowerUser> = mutableSetOf(),
     @OneToMany(fetch = FetchType.EAGER, cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)

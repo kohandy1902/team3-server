@@ -1,5 +1,9 @@
 package waffle.team3.wafflestagram.domain.User.api
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
@@ -9,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import waffle.team3.wafflestagram.domain.User.dto.FollowerUserDto
+import waffle.team3.wafflestagram.domain.User.dto.FollowingUserDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.service.FollowerUserService
 import waffle.team3.wafflestagram.domain.User.service.FollowingUserService
@@ -50,14 +57,14 @@ class UserController(
         return ResponseEntity.ok().body(UserDto.Response(user))
     }
 
-    @PostMapping("/follow/{id}/")
+    @PostMapping("/follow/{user_id}/")
     @Transactional
     fun followRequest(
         @CurrentUser user: User,
-        @PathVariable("id") id: Long // id: User-id
+        @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
-        val followUser = userService.getUserById(id)
-        if (followUser == null || user.id == id) return ResponseEntity.badRequest().build()
+        val followUser = userService.getUserById(userId)
+        if (followUser == null || user.id == userId) return ResponseEntity.badRequest().build()
         if (followUser.public) {
             followerUserService.addFollower(followUser, user)
             followingUserService.addFollowing(user, followUser)
@@ -70,13 +77,13 @@ class UserController(
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping("/approve/{id}/")
+    @PostMapping("/approve/{user_id}/")
     fun approveRequest(
         @CurrentUser user: User,
-        @PathVariable("id") id: Long // id: User-id
+        @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
         for (waitingFollower in user.waitingFollower) {
-            if (waitingFollower.user.id == id) {
+            if (waitingFollower.user.id == userId) {
                 followingUserService.addFollowing(waitingFollower.user, user)
                 followerUserService.addFollower(user, waitingFollower.user)
                 user.waitingFollower.remove(waitingFollower)
@@ -87,18 +94,68 @@ class UserController(
         return ResponseEntity.badRequest().build()
     }
 
-    @PostMapping("/refuse/{id}/")
+    @PostMapping("/refuse/{user_id}/")
     fun refuseRequest(
         @CurrentUser user: User,
-        @PathVariable("id") id: Long // id: User-id
+        @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
         for (waitingFollower in user.waitingFollower) {
-            if (waitingFollower.user.id == id) {
+            if (waitingFollower.user.id == userId) {
                 user.waitingFollower.remove(waitingFollower)
                 userService.saveUser(user)
                 return ResponseEntity.ok().build()
             }
         }
         return ResponseEntity.badRequest().build()
+    }
+
+    @GetMapping("/following/")
+    fun getFollowingList(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<FollowingUserDto.Response>> {
+        val result = convertSetToPage(user.following, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowingUserDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/follower/")
+    fun getFollowerList(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<FollowerUserDto.Response>> {
+        val result = convertSetToPage(user.follower, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowerUserDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/waiting/")
+    fun getWaitingFollowerList(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<WaitingFollowerUserDto.Response>> {
+        val result = convertSetToPage(user.waitingFollower, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                WaitingFollowerUserDto.Response(it)
+            }
+        )
+    }
+
+    fun <E> convertSetToPage(set: MutableSet<E>, pageable: Pageable): Page<E> {
+        val list = set.toList()
+        val start = pageable.offset.toInt()
+        val end = (start + pageable.pageSize).coerceAtMost(list.size)
+        if (start > list.size) return PageImpl(listOf(), pageable, list.size.toLong())
+        return PageImpl(list.subList(start, end), pageable, list.size.toLong())
     }
 }
