@@ -9,6 +9,7 @@ class UserDto {
         val email: String,
         val name: String? = null,
         val nickname: String? = null,
+        val public: Boolean = true,
         val website: String? = null,
         val bio: String? = null,
     ) {
@@ -17,6 +18,7 @@ class UserDto {
             email = user.email,
             name = user.name,
             nickname = user.nickname,
+            public = user.public,
             website = user.website,
             bio = user.bio,
         )
@@ -27,6 +29,12 @@ class UserDto {
 
         @field:NotBlank
         val password: String,
+
+        val name: String? = null,
+        val nickname: String? = null,
+        val public: Boolean = true,
+        val website: String? = null,
+        val bio: String? = null,
     )
     data class ProfileRequest(
         val public: Boolean? = null,
