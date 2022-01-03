@@ -11,7 +11,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "tags")
-class Tag (
+class Tag(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id", referencedColumnName = "id")
     val feed: Feed,
