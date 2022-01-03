@@ -45,8 +45,8 @@ class ReplyController(
     }
 
     @PutMapping("/")
-    fun updateReply(
-        @Valid @RequestBody updateRequest: ReplyDto.UpdateRequest, @RequestParam("id") id: Long): ResponseEntity<ReplyDto.Response> {
+    fun updateReply(@Valid @RequestBody updateRequest: ReplyDto.UpdateRequest,
+                    @RequestParam("id") id: Long): ResponseEntity<ReplyDto.Response> {
         val reply = replyService.update(updateRequest, id)
         return ResponseEntity.ok().body(ReplyDto.Response(reply))
     }
