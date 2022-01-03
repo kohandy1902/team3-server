@@ -45,8 +45,10 @@ class CommentController(
     }
 
     @PutMapping("/")
-    fun updateComment(@Valid @RequestBody updateRequest: CommentDto.UpdateRequest,
-                      @RequestParam("id") id: Long): ResponseEntity<CommentDto.Response> {
+    fun updateComment(
+        @Valid @RequestBody updateRequest: CommentDto.UpdateRequest,
+        @RequestParam("id") id: Long
+    ): ResponseEntity<CommentDto.Response> {
         val comment = commentService.update(updateRequest, id)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }
