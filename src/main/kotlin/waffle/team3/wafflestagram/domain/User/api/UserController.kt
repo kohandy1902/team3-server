@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -61,10 +62,11 @@ class UserController(
     @Transactional
     fun followRequest(
         @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val followUser = userService.getUserById(userId)
-        if (followUser == null || user.id == userId) return ResponseEntity.badRequest().build()
+        if (followUser == null || user.id == userId || user.following.any { it.user.id == userId })
+            return ResponseEntity.badRequest().build()
         if (followUser.public) {
             followerUserService.addFollower(followUser, user)
             followingUserService.addFollowing(user, followUser)
@@ -75,6 +77,24 @@ class UserController(
             userService.saveUser(followUser)
         }
         return ResponseEntity.ok().build()
+    }
+
+    @DeleteMapping("/unfollow/{user_id}/")
+    @Transactional
+    fun unfollowRequest(
+        @CurrentUser user: User,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<UserDto.Response> {
+        val followUser = userService.getUserById(userId)
+        if (followUser == null) return ResponseEntity.badRequest().build()
+        val erase1 = user.following.removeIf { it.user.id == userId }
+        val erase2 = followUser.follower.removeIf { it.user.id == user.id }
+        if (erase1 && erase2) {
+            userService.saveUser(user)
+            userService.saveUser(followUser)
+            return ResponseEntity.ok().build()
+        }
+        return ResponseEntity.badRequest().build()
     }
 
     @PostMapping("/approve/{user_id}/")
