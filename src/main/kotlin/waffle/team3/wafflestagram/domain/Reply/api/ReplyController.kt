@@ -23,7 +23,11 @@ class ReplyController(
     private val replyService: ReplyService,
 ) {
     @PostMapping("/")
-    fun createReply(@Valid @RequestBody createRequest: ReplyDto.CreateRequest, @CurrentUser user: User, @RequestParam("commentId") commentId: Long): ResponseEntity<ReplyDto.Response> {
+    fun createReply(
+        @Valid @RequestBody createRequest: ReplyDto.CreateRequest,
+        @CurrentUser user: User,
+        @RequestParam("commentId") commentId: Long
+    ): ResponseEntity<ReplyDto.Response> {
         val newReply = replyService.create(createRequest, user, commentId)
         return ResponseEntity.ok().body(ReplyDto.Response(newReply))
     }
@@ -41,7 +45,10 @@ class ReplyController(
     }
 
     @PutMapping("/")
-    fun updateReply(@Valid @RequestBody updateRequest: ReplyDto.UpdateRequest, @RequestParam("id") id: Long): ResponseEntity<ReplyDto.Response> {
+    fun updateReply(
+        @Valid @RequestBody updateRequest: ReplyDto.UpdateRequest,
+        @RequestParam("id") id: Long
+    ): ResponseEntity<ReplyDto.Response> {
         val reply = replyService.update(updateRequest, id)
         return ResponseEntity.ok().body(ReplyDto.Response(reply))
     }

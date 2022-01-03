@@ -28,7 +28,8 @@ class UserService(
         profileRequest.public?.let { currentUser.public = it }
         profileRequest.name?.let { currentUser.name = it }
         profileRequest.nickname?.let {
-            if (userRepository.findByNickname(profileRequest.nickname) != null) throw UserException("this nickname already exists")
+            if (userRepository.findByNickname(profileRequest.nickname) != null)
+                throw UserException("this nickname already exists")
             else currentUser.nickname = it
         }
         profileRequest.website?.let { currentUser.website = it }

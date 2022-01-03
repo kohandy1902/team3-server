@@ -37,7 +37,10 @@ class UserController(
     }
 
     @GetMapping("/profile/")
-    fun getProfile(@CurrentUser currentUser: User, @RequestParam("nickname") nickname: String): ResponseEntity<UserDto.Response> {
+    fun getProfile(
+        @CurrentUser currentUser: User,
+        @RequestParam("nickname") nickname: String
+    ): ResponseEntity<UserDto.Response> {
         val user = userService.getUser(currentUser, nickname)
         return ResponseEntity.ok().body(UserDto.Response(user))
     }
