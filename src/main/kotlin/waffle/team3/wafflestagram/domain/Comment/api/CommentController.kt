@@ -39,17 +39,13 @@ class CommentController(
     }
 
     @GetMapping("/list/")
-    fun getCommentList(
-        @RequestParam("feedId") feedId: Long, pageable: Pageable
-    ): ResponseEntity<Page<CommentDto.Response>> {
+    fun getCommentList(@RequestParam("feedId") feedId: Long, pageable: Pageable): ResponseEntity<Page<CommentDto.Response>> {
         val commentList = commentService.getList(feedId, pageable)
         return ResponseEntity.ok().body(commentList.map { CommentDto.Response(it) })
     }
 
     @PutMapping("/")
-    fun updateComment(
-        @Valid @RequestBody updateRequest: CommentDto.UpdateRequest,
-        @RequestParam("id") id: Long): ResponseEntity<CommentDto.Response> {
+    fun updateComment(@Valid @RequestBody updateRequest: CommentDto.UpdateRequest, @RequestParam("id") id: Long): ResponseEntity<CommentDto.Response> {
         val comment = commentService.update(updateRequest, id)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }

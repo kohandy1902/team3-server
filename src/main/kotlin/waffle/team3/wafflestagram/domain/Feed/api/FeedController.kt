@@ -24,9 +24,7 @@ class FeedController(
     private val feedService: FeedService,
 ) {
     @PostMapping("/")
-    fun upload(
-        @Valid @RequestBody uploadRequest: FeedDto.UploadRequest,
-        @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
+    fun upload(@Valid @RequestBody uploadRequest: FeedDto.UploadRequest, @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
         val feed = feedService.upload(uploadRequest, user)
         return ResponseEntity
             .status(201)
