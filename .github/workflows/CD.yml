@@ -2,8 +2,7 @@ name: CD with AWS
 
 on:
     push:
-        branches:
-            - 'develop'
+        branches: [develop]
 
 jobs:
     build:
@@ -70,3 +69,8 @@ jobs:
                   --deployment-group-name develop
                   --s3-location bucket=waffle-deploy,bundleType=zip,key=waffle-team3-server.zip \
                   --region ap-northeast-2
+
+            - name: Cleanup Gradle Cache
+              run: |
+                  rm -f ~/.gradle/caches/modules-2/modules-2.lock
+                  rm -f ~/.gradle/caches/modules-2/gc.properties
