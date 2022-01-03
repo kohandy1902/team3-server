@@ -1,10 +1,8 @@
 HELP.md
-.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-scripts/
 
 ### STS ###
 .apt_generated
@@ -38,12 +36,19 @@ out/
 .vscode/
 
 ### db info ###
-src/main/resources/application-dbInfo.yml
+src/main/resources/application-dbInfo.properties
 src/main/resources/application-s3.properties
 src/main/resources/application-oauth.properties
 
 ### social login info ###
 src/main/resources/application.properties
 
-.log
-.out
+# log
+hs_err_pid*
+*.log
+
+# Gradle
+.gradle
+
+# nginx
+nginx

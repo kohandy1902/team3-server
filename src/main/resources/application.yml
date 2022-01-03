@@ -47,11 +47,6 @@ spring:
   config:
     activate:
       on-profile: dev
-    additional-location: classpath:application-dbInfo.yml
-  datasource:
-    url: jdbc:mysql://${RDS_HOSTNAME}:${RDS_PORT}/${RDS_DB_NAME}?serverTimezone=UTC
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
   jpa:
     generate-ddl: true
     hibernate:

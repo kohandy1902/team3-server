@@ -37,7 +37,8 @@ class FeedService(
     }
 
     fun update(id: Long, updateRequest: FeedDto.UpdateRequest, user: User): Feed {
-        val feed = feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        val feed = feedRepository.findByIdOrNull(id)
+            ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
 //        val tags: MutableList<User> = mutableListOf()
 //
 //        for (nickname: String in updateRequest.tags) {
@@ -53,7 +54,8 @@ class FeedService(
     }
 
     fun get(id: Long): Feed {
-        return feedRepository.findByIdOrNull(id) ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        return feedRepository.findByIdOrNull(id)
+            ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
     }
 
     fun getPage(offset: Int, number: Int): Page<Feed> {
