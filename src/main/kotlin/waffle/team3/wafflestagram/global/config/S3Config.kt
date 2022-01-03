@@ -16,7 +16,7 @@ class S3Config {
     lateinit var accessKey: String
     @Value("\${cloud.aws.credentials.secret-key}")
     lateinit var secretKey: String
-    @Value("cloud.aws.region.static")
+    @Value("\${cloud.aws.region.static}")
     lateinit var region: String
 
     @Bean
