@@ -23,7 +23,11 @@ class ReplyController(
     private val replyService: ReplyService,
 ) {
     @PostMapping("/")
-    fun createReply(@Valid @RequestBody createRequest: ReplyDto.CreateRequest, @CurrentUser user: User, @RequestParam("commentId") commentId: Long): ResponseEntity<ReplyDto.Response> {
+    fun createReply(
+        @Valid @RequestBody createRequest: ReplyDto.CreateRequest,
+        @CurrentUser user: User,
+        @RequestParam("commentId") commentId: Long
+    ): ResponseEntity<ReplyDto.Response> {
         val newReply = replyService.create(createRequest, user, commentId)
         return ResponseEntity.ok().body(ReplyDto.Response(newReply))
     }

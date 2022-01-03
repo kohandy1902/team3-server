@@ -23,7 +23,11 @@ class CommentController(
     private val commentService: CommentService,
 ) {
     @PostMapping("/")
-    fun createComment(@Valid @RequestBody createRequest: CommentDto.CreateRequest, @CurrentUser user: User, @RequestParam("feedId") feedId: Long): ResponseEntity<CommentDto.Response> {
+    fun createComment(
+        @Valid @RequestBody createRequest: CommentDto.CreateRequest,
+        @CurrentUser user: User,
+        @RequestParam("feedId") feedId: Long
+    ): ResponseEntity<CommentDto.Response> {
         val newComment = commentService.create(createRequest, user, feedId)
         return ResponseEntity.ok().body(CommentDto.Response(newComment))
     }
