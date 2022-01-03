@@ -39,13 +39,18 @@ class ReplyController(
     }
 
     @GetMapping("/list/")
-    fun getReplyList(@RequestParam("commentId") commentId: Long, pageable: Pageable): ResponseEntity<Page<ReplyDto.Response>> {
+    fun getReplyList(
+        @RequestParam("commentId") commentId: Long, pageable: Pageable
+    ): ResponseEntity<Page<ReplyDto.Response>> {
         val replyList = replyService.getList(commentId, pageable)
         return ResponseEntity.ok().body(replyList.map { ReplyDto.Response(it) })
     }
 
     @PutMapping("/")
-    fun updateReply(@Valid @RequestBody updateRequest: ReplyDto.UpdateRequest, @RequestParam("id") id: Long): ResponseEntity<ReplyDto.Response> {
+    fun updateReply(
+        @Valid @RequestBody updateRequest: ReplyDto.UpdateRequest,
+        @RequestParam("id") id: Long
+    ): ResponseEntity<ReplyDto.Response> {
         val reply = replyService.update(updateRequest, id)
         return ResponseEntity.ok().body(ReplyDto.Response(reply))
     }

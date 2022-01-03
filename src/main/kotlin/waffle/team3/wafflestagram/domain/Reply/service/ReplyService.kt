@@ -18,7 +18,9 @@ class ReplyService(
     private val commentRepository: CommentRepository,
 ) {
     fun create(createRequest: ReplyDto.CreateRequest, user: User, commentId: Long): Reply {
-        val comment = commentRepository.findByIdOrNull(commentId) ?: throw InvalidCommentException("NO corresponding comment")
+        val comment = commentRepository.findByIdOrNull(commentId)
+            ?: throw InvalidCommentException("NO corresponding comment")
+
         return replyRepository.save(
             Reply(
                 writer = user.nickname ?: user.email,
@@ -44,6 +46,7 @@ class ReplyService(
     }
 
     fun delete(id: Long) {
-        replyRepository.delete(replyRepository.findByIdOrNull(id) ?: throw InvalidReplyException("No corresponding reply"))
+        replyRepository.delete(replyRepository.findByIdOrNull(id)
+            ?: throw InvalidReplyException("No corresponding reply"))
     }
 }

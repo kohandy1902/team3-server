@@ -20,7 +20,8 @@ class CommentDto {
             updatedAt = comment.updatedAt,
             writer = comment.writer,
             text = comment.text,
-            reply = comment.replies.filterIndexed { index, i -> index < 3 }.let { it.map { reply -> ReplyDto.Response(reply) } }
+            reply = comment.replies.filterIndexed { index, i -> index < 3 }
+                .let { it.map { reply -> ReplyDto.Response(reply) } }
         )
     }
     data class CreateRequest(

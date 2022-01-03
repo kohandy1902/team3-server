@@ -43,6 +43,7 @@ class CommentService(
     }
 
     fun delete(id: Long) {
-        commentRepository.delete(commentRepository.findByIdOrNull(id) ?: throw InvalidCommentException("No corresponding comment"))
+        commentRepository.delete(commentRepository.findByIdOrNull(id)
+            ?: throw InvalidCommentException("No corresponding comment"))
     }
 }
