@@ -18,6 +18,7 @@ import waffle.team3.wafflestagram.domain.User.dto.FollowerUserDto
 import waffle.team3.wafflestagram.domain.User.dto.FollowingUserDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
+import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.service.FollowerUserService
 import waffle.team3.wafflestagram.domain.User.service.FollowingUserService
@@ -85,8 +86,7 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
-        val followUser = userService.getUserById(userId)
-        if (followUser == null) return ResponseEntity.badRequest().build()
+        val followUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
         val erase1 = user.following.removeIf { it.user.id == userId }
         val erase2 = followUser.follower.removeIf { it.user.id == user.id }
         if (erase1 && erase2) {
