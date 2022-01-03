@@ -5,16 +5,20 @@ import javax.validation.constraints.NotBlank
 
 class UserDto {
     data class Response(
+        val id: Long,
         val email: String,
         val name: String? = null,
         val nickname: String? = null,
+        val public: Boolean = true,
         val website: String? = null,
         val bio: String? = null,
     ) {
         constructor(user: User) : this(
+            id = user.id,
             email = user.email,
             name = user.name,
             nickname = user.nickname,
+            public = user.public,
             website = user.website,
             bio = user.bio,
         )
