@@ -29,12 +29,6 @@ class UserDto {
 
         @field:NotBlank
         val password: String,
-
-        val name: String? = null,
-        val nickname: String? = null,
-        val public: Boolean = true,
-        val website: String? = null,
-        val bio: String? = null,
     )
     data class ProfileRequest(
         val public: Boolean? = null,
