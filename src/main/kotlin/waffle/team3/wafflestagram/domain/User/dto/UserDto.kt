@@ -30,6 +30,7 @@ class UserDto {
         @field:NotBlank
         val password: String,
 
+        val public: Boolean = true,
         val name: String? = null,
         val nickname: String? = null,
         val birthday: String? = null,

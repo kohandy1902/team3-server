@@ -27,6 +27,7 @@ class UserService(
             User(
                 email = signupRequest.email,
                 password = passwordEncoder.encode(signupRequest.password),
+                public = signupRequest.public,
                 name = signupRequest.name,
                 nickname = signupRequest.nickname,
                 birthday = signupRequest.birthday,
