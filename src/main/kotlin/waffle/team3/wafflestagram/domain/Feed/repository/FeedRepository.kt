@@ -12,5 +12,4 @@ interface FeedRepository : JpaRepository<Feed, Long> {
 
     @EntityGraph(attributePaths = ["comments", "comments.feed"])
     fun findByOrderByUpdatedAtDesc(pageable: Pageable): Page<Feed>
-
 }
