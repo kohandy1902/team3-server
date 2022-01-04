@@ -1,7 +1,7 @@
 package waffle.team3.wafflestagram.domain.Reply.api
 
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,8 +39,12 @@ class ReplyController(
     }
 
     @GetMapping("/list/")
-    fun getReplyList(@RequestParam("commentId") commentId: Long, pageable: Pageable): ResponseEntity<Page<ReplyDto.Response>> {
-        val replyList = replyService.getList(commentId, pageable)
+    fun getReplyList(
+        @RequestParam("commentId") commentId: Long,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<ReplyDto.Response>> {
+        val replyList = replyService.getList(commentId, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(replyList.map { ReplyDto.Response(it) })
     }
 

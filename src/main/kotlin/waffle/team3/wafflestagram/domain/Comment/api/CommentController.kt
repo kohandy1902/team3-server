@@ -1,7 +1,7 @@
 package waffle.team3.wafflestagram.domain.Comment.api
 
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,8 +39,12 @@ class CommentController(
     }
 
     @GetMapping("/list/")
-    fun getCommentList(@RequestParam("feedId") feedId: Long, pageable: Pageable): ResponseEntity<Page<CommentDto.Response>> {
-        val commentList = commentService.getList(feedId, pageable)
+    fun getCommentList(
+        @RequestParam("feedId") feedId: Long,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<CommentDto.Response>> {
+        val commentList = commentService.getList(feedId, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(commentList.map { CommentDto.Response(it) })
     }
 
