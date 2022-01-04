@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,6 +20,7 @@ import waffle.team3.wafflestagram.domain.User.dto.FollowingUserDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
+import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.service.FollowerUserService
 import waffle.team3.wafflestagram.domain.User.service.FollowingUserService
@@ -39,8 +41,12 @@ class UserController(
 ) {
     @PostMapping("/signup/")
     fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<*> {
-        val user = userService.signup(signupRequest)
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(null)
+        return try{
+            val user = userService.signup(signupRequest)
+            ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(null)
+        } catch (e: UserException) {
+            ResponseEntity.status(HttpStatus.CONFLICT).body("email or nickname is duplicated")
+        }
     }
 
     @GetMapping("/me/")

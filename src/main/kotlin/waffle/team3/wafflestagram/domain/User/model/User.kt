@@ -14,7 +14,6 @@ import javax.persistence.Table
 @Entity
 @Table(name = "users")
 class User(
-    @Column(unique = true)
     val email: String,
     val password: String? = null,
     var public: Boolean = true,
@@ -32,4 +31,6 @@ class User(
     var profilePhoto: Photo? = null,
     @OneToMany(mappedBy = "user")
     var feeds: MutableList<Feed> = mutableListOf(),
+    var birthday: String? = null,
+    var phoneNumber: String? = null,
 ) : BaseTimeEntity()
