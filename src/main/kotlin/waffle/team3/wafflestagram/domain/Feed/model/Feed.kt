@@ -1,6 +1,7 @@
 package waffle.team3.wafflestagram.domain.Feed.model
 
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
+import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.model.BaseTimeEntity
 import javax.persistence.CascadeType
@@ -23,6 +24,10 @@ class Feed(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     val user: User,
+
+    @Column(name = "tags")
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")
+    var tags: MutableList<Tag> = mutableListOf(),
 
     @Column(name = "comments")
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")

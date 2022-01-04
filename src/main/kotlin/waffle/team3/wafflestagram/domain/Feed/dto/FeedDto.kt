@@ -23,11 +23,13 @@ class FeedDto {
 
     data class UploadRequest(
         val content: String,
-        val tags: MutableList<String> = mutableListOf()
+        val tags: List<String> = listOf(),
+        val userTags: List<String> = listOf()
     )
 
     data class UpdateRequest(
         val content: String,
-        val tags: MutableList<String> = mutableListOf()
+        val tags: List<String> = listOf(),
+        val userTags: List<String> = listOf()
     )
 }
