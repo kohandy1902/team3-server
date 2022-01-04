@@ -15,12 +15,12 @@ permissions:
 
 hooks:
     ApplicationStart:
-        - location: scripts/bash/run_new_was.sh
+        - location: run_new_was.sh
           timeout: 180
           runas: ec2-user
-        - location: scripts/bash/health_check.sh
+        - location: health_check.sh
           timeout: 180
           runas: ec2-user
-        - location: scripts/bash/switch.sh
+        - location: switch.sh
           timeout: 180
           runas: ec2-user
