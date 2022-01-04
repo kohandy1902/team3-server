@@ -3,6 +3,7 @@ package waffle.team3.wafflestagram.domain.Feed.model
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.model.BaseTimeEntity
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -24,6 +25,6 @@ class Feed(
     val user: User,
 
     @Column(name = "comments")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "feed")
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")
     var comments: MutableList<Comment> = mutableListOf(),
 ) : BaseTimeEntity()
