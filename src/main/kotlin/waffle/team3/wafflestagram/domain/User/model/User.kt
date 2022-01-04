@@ -3,7 +3,6 @@ package waffle.team3.wafflestagram.domain.User.model
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.model.BaseTimeEntity
 import javax.persistence.CascadeType
-import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.OneToMany
@@ -12,7 +11,6 @@ import javax.persistence.Table
 @Entity
 @Table(name = "users")
 class User(
-    @Column(unique = true)
     val email: String,
     val password: String? = null,
     var public: Boolean = true,
@@ -37,4 +35,6 @@ class User(
 
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
     var feeds: MutableList<Feed> = mutableListOf(),
+    var birthday: String? = null,
+    var phoneNumber: String? = null,
 ) : BaseTimeEntity()

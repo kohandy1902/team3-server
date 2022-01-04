@@ -16,10 +16,22 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun signup(signupRequest: UserDto.SignupRequest): User {
+        if (userRepository.findByEmail(signupRequest.email) != null)
+            throw UserException("this email already exists")
+        signupRequest.nickname?.let {
+            val nicknameUser = userRepository.findByNickname(it)
+            if (nicknameUser != null)
+                throw UserException("this nickname already exists")
+        }
         return userRepository.save(
             User(
                 email = signupRequest.email,
-                password = passwordEncoder.encode(signupRequest.password)
+                password = passwordEncoder.encode(signupRequest.password),
+                public = signupRequest.public,
+                name = signupRequest.name,
+                nickname = signupRequest.nickname,
+                birthday = signupRequest.birthday,
+                phoneNumber = signupRequest.phoneNumber,
             )
         )
     }
@@ -29,12 +41,15 @@ class UserService(
         profileRequest.public?.let { currentUser.public = it }
         profileRequest.name?.let { currentUser.name = it }
         profileRequest.nickname?.let {
-            if (userRepository.findByNickname(profileRequest.nickname) != null)
+            val nicknameUser = userRepository.findByNickname(profileRequest.nickname)
+            if (nicknameUser != null && nicknameUser.id != currentUser.id)
                 throw UserException("this nickname already exists")
             else currentUser.nickname = it
         }
         profileRequest.website?.let { currentUser.website = it }
         profileRequest.bio?.let { currentUser.bio = it }
+        profileRequest.birthday?.let { currentUser.birthday = it }
+        profileRequest.phoneNumber?.let { currentUser.phoneNumber = it }
         userRepository.save(currentUser)
     }
 
