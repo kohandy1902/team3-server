@@ -16,7 +16,7 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun signup(signupRequest: UserDto.SignupRequest): User {
-        if(userRepository.findByEmail(signupRequest.email) != null)
+        if (userRepository.findByEmail(signupRequest.email) != null)
             throw UserException("this email already exists")
         signupRequest.nickname?.let {
             val nicknameUser = userRepository.findByNickname(it)

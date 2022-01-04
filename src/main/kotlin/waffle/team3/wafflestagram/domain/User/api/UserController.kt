@@ -41,7 +41,7 @@ class UserController(
 ) {
     @PostMapping("/signup/")
     fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<*> {
-        return try{
+        return try {
             val user = userService.signup(signupRequest)
             ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(null)
         } catch (e: UserException) {
