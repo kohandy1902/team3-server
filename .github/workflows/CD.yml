@@ -65,9 +65,9 @@ jobs:
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               run: |
                   aws deploy create-deployment \
-                  --application-name wafflestagram \
+                  --application-name waffleapp \
                   --deployment-config-name CodeDeployDefault.AllAtOnce \
-                  --deployment-group-name develop \
+                  --deployment-group-name dev \
                   --s3-location bucket=waffle-deploy,bundleType=zip,key=waffle-team3-server.zip \
                   --region ap-northeast-2
 

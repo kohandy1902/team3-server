@@ -2,6 +2,7 @@ package waffle.team3.wafflestagram.global
 
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Comment.repository.CommentRepository
@@ -13,6 +14,7 @@ import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 
 @Component
+@Profile("local")
 class DataLoader(
     private val userRepository: UserRepository,
     private val feedRepository: FeedRepository,
@@ -26,7 +28,7 @@ class DataLoader(
         userRepository.save(newUser0)
         userRepository.save(newUser1)
         val newFeed = feedRepository.save(
-            Feed(user = newUser0)
+            Feed(content = "hi", user = newUser0)
         )
 
         for (i in 0 until 10) {
