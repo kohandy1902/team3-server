@@ -101,12 +101,12 @@ class FeedService(
 
     @Transactional
     fun delete(id: Long, user: User) {
-        val feed = get(id)
+        val feed = feedRepository.findByIdOrNull(id)
+            ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
 //        val photoKeys = feed.photoKeys.split(",")
 //        for (photoKey: String in photoKeys) {
 //            s3Controller.deletePhoto(photoKey)
 //        }
-
         feedRepository.delete(feed)
     }
 }

@@ -1,6 +1,7 @@
 package waffle.team3.wafflestagram.domain.Feed.api
 
 import org.springframework.data.domain.Page
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
-import waffle.team3.wafflestagram.domain.Feed.model.Feed
+import waffle.team3.wafflestagram.domain.Feed.exception.FeedDoesNotExistException
 import waffle.team3.wafflestagram.domain.Feed.service.FeedService
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.global.auth.CurrentUser
@@ -69,7 +70,12 @@ class FeedController(
     fun delete(
         @PathVariable("feed_id") feedId: Long,
         @CurrentUser user: User
-    ) {
-        feedService.delete(feedId, user)
+    ): ResponseEntity<*> {
+        return try {
+            feedService.delete(feedId, user)
+            ResponseEntity.ok().body("Success!")
+        } catch (e: FeedDoesNotExistException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The feed does not exist.")
+        }
     }
 }
