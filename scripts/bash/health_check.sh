@@ -5,9 +5,9 @@ TARGET_PORT=0
 
 # Toggle port Number
 if [ "${CURRENT_PORT}" -eq 8081 ]; then
-    TARGET_PORT=8082
-elif [ "${CURRENT_PORT}" -eq 8082 ]; then
     TARGET_PORT=8081
+elif [ "${CURRENT_PORT}" -eq 8082 ]; then
+    TARGET_PORT=8082
 else
     echo "> NO WAS is connected to nginx"
     exit 1
@@ -19,7 +19,7 @@ for RETRY_COUNT in {1..10}
 do
     echo "> #${RETRY_COUNT} trying..."
 
-    RESPONSE=$(curl -s http://127.0.0.1:"${TARGET_PORT}"/ping/)
+    RESPONSE=$(curl -s http://127.0.0.1:"${TARGET_PORT}"/api/v1/ping/)
     VALID=$(echo "${RESPONSE}" | grep "pong" | wc -l)
 
     if [ "${VALID}" -ge 1 ]; then
