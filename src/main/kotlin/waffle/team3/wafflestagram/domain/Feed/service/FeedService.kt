@@ -12,6 +12,7 @@ import waffle.team3.wafflestagram.domain.Like.model.Like
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
+import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
@@ -36,8 +37,9 @@ class FeedService(
 
         val userTagList = mutableListOf<UserTag>()
         for (nickname in uploadRequest.userTags) {
-            val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
-            val userTag = UserTag(user = user, feed = feed)
+            val findUser = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
+            if (findUser.id == user.id) throw UserException("You cannot tag yourself.")
+            val userTag = UserTag(user = findUser, feed = feed)
             userTagList.add(userTag)
         }
 
@@ -60,8 +62,9 @@ class FeedService(
 
         val userTagList = mutableListOf<UserTag>()
         for (nickname in updateRequest.userTags) {
-            val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
-            val userTag = UserTag(user = user, feed = feed)
+            val findUser = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("User with this nickname does not exist.")
+            if (findUser.id == user.id) throw UserException("You cannot tag yourself.")
+            val userTag = UserTag(user = findUser, feed = feed)
             userTagList.add(userTag)
         }
 
@@ -128,7 +131,7 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
 
         val likes = feed.likes
-        val deletedLike = likes.find { it.user == user }
+        val deletedLike = likes.find { it.user.id == user.id }
             ?: throw UserDoesNotExistException("You did not add like to this feed.")
         likes.remove(deletedLike)
 
