@@ -52,14 +52,14 @@ class ReplyController(
     @PutMapping("/{reply_id}/")
     fun updateReply(
         @Valid @RequestBody updateRequest: ReplyDto.UpdateRequest,
-        @RequestParam("reply_id") replyId: Long
+        @PathVariable("reply_id") replyId: Long
     ): ResponseEntity<ReplyDto.Response> {
         val reply = replyService.update(updateRequest, replyId)
         return ResponseEntity.ok().body(ReplyDto.Response(reply))
     }
 
     @DeleteMapping("/{reply_id}/")
-    fun deleteReply(@RequestParam("reply_id") replyId: Long) {
+    fun deleteReply(@PathVariable("reply_id") replyId: Long) {
         replyService.delete(replyId)
     }
 }
