@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,25 +23,25 @@ import javax.validation.Valid
 class CommentController(
     private val commentService: CommentService,
 ) {
-    @PostMapping("/")
+    @PostMapping("/{feed_id}/")
     fun createComment(
         @Valid @RequestBody createRequest: CommentDto.CreateRequest,
         @CurrentUser user: User,
-        @RequestParam("feedId") feedId: Long
+        @PathVariable("feed_id") feedId: Long
     ): ResponseEntity<CommentDto.Response> {
         val newComment = commentService.create(createRequest, user, feedId)
         return ResponseEntity.ok().body(CommentDto.Response(newComment))
     }
 
-    @GetMapping("/")
-    fun getComment(@RequestParam("id") id: Long): ResponseEntity<CommentDto.Response> {
-        val comment = commentService.get(id)
+    @GetMapping("/{feed_id}/")
+    fun getComment(@PathVariable("feed_id") feedId: Long): ResponseEntity<CommentDto.Response> {
+        val comment = commentService.get(feedId)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }
 
-    @GetMapping("/list/")
+    @GetMapping("/list/{feed_id}/")
     fun getCommentList(
-        @RequestParam("feedId") feedId: Long,
+        @PathVariable("feed_id") feedId: Long,
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<CommentDto.Response>> {
@@ -48,17 +49,17 @@ class CommentController(
         return ResponseEntity.ok().body(commentList.map { CommentDto.Response(it) })
     }
 
-    @PutMapping("/")
+    @PutMapping("/{feed_id}/")
     fun updateComment(
         @Valid @RequestBody updateRequest: CommentDto.UpdateRequest,
-        @RequestParam("id") id: Long
+        @PathVariable("feed_id") feedId: Long,
     ): ResponseEntity<CommentDto.Response> {
-        val comment = commentService.update(updateRequest, id)
+        val comment = commentService.update(updateRequest, feedId)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }
 
-    @DeleteMapping("/")
-    fun deleteComment(@RequestParam("id") id: Long) {
-        commentService.delete(id)
+    @DeleteMapping("/{feed_id}/")
+    fun deleteComment(@PathVariable("feed_id") feedId: Long) {
+        commentService.delete(feedId)
     }
 }
