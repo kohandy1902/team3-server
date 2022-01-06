@@ -102,7 +102,7 @@ class UserController(
             userService.saveUser(followUser)
             return ResponseEntity.ok().build()
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Not following User")
     }
 
     @PostMapping("/approve/{user_id}/")
