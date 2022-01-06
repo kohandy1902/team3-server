@@ -9,7 +9,6 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
-import javax.transaction.Transactional
 
 @Service
 class UserService(
