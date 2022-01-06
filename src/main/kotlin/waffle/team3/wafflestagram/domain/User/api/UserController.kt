@@ -75,7 +75,7 @@ class UserController(
         val followUser = userService.getUserById(userId)
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         if (followUser == null || currUser.id == userId || currUser.following.any { it.user.id == userId })
-            return ResponseEntity.badRequest().build()
+            throw UserDoesNotExistException("user not exist")
         if (followUser.public) {
             followerUserService.addFollower(followUser, currUser)
             followingUserService.addFollowing(currUser, followUser)
@@ -102,7 +102,7 @@ class UserController(
             userService.saveUser(followUser)
             return ResponseEntity.ok().build()
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Not following User")
     }
 
     @PostMapping("/approve/{user_id}/")
@@ -120,7 +120,7 @@ class UserController(
                 return ResponseEntity.ok().build()
             }
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @PostMapping("/refuse/{user_id}/")
@@ -136,7 +136,7 @@ class UserController(
                 return ResponseEntity.ok().build()
             }
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @GetMapping("/following/")
