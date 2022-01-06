@@ -77,5 +77,8 @@ class SecurityConfig(
                     handler!!.onAuthenticationFailure(request, response, exception)
                 }
             }
+            .logout()
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
     }
 }
