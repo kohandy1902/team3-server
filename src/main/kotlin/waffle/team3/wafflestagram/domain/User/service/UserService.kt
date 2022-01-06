@@ -14,6 +14,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
+    @Transactional
     fun signup(signupRequest: UserDto.SignupRequest): User {
         if (userRepository.findByEmail(signupRequest.email) != null)
             throw UserException("this email already exists")
@@ -35,6 +36,7 @@ class UserService(
         )
     }
 
+    @Transactional
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
         profileRequest.public?.let { currentUser.public = it }
@@ -52,6 +54,7 @@ class UserService(
         userRepository.save(currentUser)
     }
 
+    @Transactional
     fun getUser(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
         if (!user.public) {

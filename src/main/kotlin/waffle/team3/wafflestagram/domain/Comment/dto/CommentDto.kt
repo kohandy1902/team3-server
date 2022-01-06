@@ -2,6 +2,7 @@ package waffle.team3.wafflestagram.domain.Comment.dto
 
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Reply.dto.ReplyDto
+import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import java.time.LocalDateTime
 import javax.validation.constraints.NotBlank
 
@@ -10,7 +11,7 @@ class CommentDto {
         val id: Long,
         val createdAt: LocalDateTime?,
         val updatedAt: LocalDateTime? = null,
-        val writer: String,
+        val writer: UserDto.Response,
         val text: String,
         val reply: List<ReplyDto.Response>? = null,
     ) {
@@ -18,7 +19,7 @@ class CommentDto {
             id = comment.id,
             createdAt = comment.createdAt,
             updatedAt = comment.updatedAt,
-            writer = comment.writer,
+            writer = UserDto.Response(comment.writer),
             text = comment.text,
             reply = comment.replies.filterIndexed { index, i -> index < 3 }
                 .let { it.map { reply -> ReplyDto.Response(reply) } }

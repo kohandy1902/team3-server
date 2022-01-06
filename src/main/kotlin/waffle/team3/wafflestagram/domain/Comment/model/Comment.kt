@@ -2,6 +2,7 @@ package waffle.team3.wafflestagram.domain.Comment.model
 
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Reply.model.Reply
+import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.model.BaseTimeEntity
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -18,7 +19,8 @@ class Comment(
     @JoinColumn(name = "feed_id", referencedColumnName = "id", nullable = true)
     val feed: Feed,
 
-    val writer: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    val writer: User,
     var text: String,
 
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "comment")

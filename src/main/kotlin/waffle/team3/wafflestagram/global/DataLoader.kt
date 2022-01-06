@@ -34,7 +34,7 @@ class DataLoader(
         for (i in 0 until 10) {
             val comment = commentRepository.save(
                 Comment(
-                    writer = "lcm_harry",
+                    writer = newUser0,
                     text = "comment_test $i",
                     feed = newFeed,
                 )
@@ -42,7 +42,7 @@ class DataLoader(
             for (j in 0 until 10) {
                 replyRepository.save(
                     Reply(
-                        writer = "counterPart",
+                        writer = newUser1,
                         text = "reply_test ${10 * i + j}",
                         comment = comment
                     )
