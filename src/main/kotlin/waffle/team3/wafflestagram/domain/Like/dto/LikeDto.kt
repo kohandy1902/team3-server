@@ -6,7 +6,7 @@ class LikeDto {
     data class Response(
         val nickname: String?
     ) {
-        constructor(like: Like): this(
+        constructor(like: Like) : this(
             nickname = like.user.nickname
         )
     }

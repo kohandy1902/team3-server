@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 import waffle.team3.wafflestagram.domain.Like.model.Like
 
 @Repository
-interface LikeRepository: JpaRepository<Like, Long> {
-}
+interface LikeRepository : JpaRepository<Like, Long>
