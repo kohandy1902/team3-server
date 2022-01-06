@@ -15,13 +15,13 @@ class User(
     val password: String? = null,
     var public: Boolean = true,
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var follower: MutableSet<FollowerUser> = mutableSetOf(),
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var following: MutableSet<FollowingUser> = mutableSetOf(),
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var waitingFollower: MutableSet<WaitingFollowerUser> = mutableSetOf(),
 
     var name: String? = null,
