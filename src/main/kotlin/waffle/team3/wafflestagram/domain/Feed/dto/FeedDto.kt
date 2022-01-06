@@ -5,12 +5,14 @@ import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Like.dto.LikeDto
 import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
+import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
 import java.time.LocalDateTime
 
 class FeedDto {
     data class Response(
         val id: Long,
+        val author: UserDto.Response,
         val content: String,
         val comments: List<CommentDto.Response>,
         val likes: List<LikeDto.Response>,
@@ -25,6 +27,7 @@ class FeedDto {
     ) {
         constructor(feed: Feed) : this(
             id = feed.id,
+            author = UserDto.Response(feed.user),
             content = feed.content,
             comments = feed.comments.let { it.map { comment -> CommentDto.Response(comment) } },
             likes = feed.likes.let { it.map { like -> LikeDto.Response(like) } },

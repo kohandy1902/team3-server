@@ -55,9 +55,10 @@ class FeedController(
     @GetMapping("/")
     fun getFeedsByPage(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
-        @RequestParam(value = "number", defaultValue = "30") limit: Int
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @CurrentUser user: User
     ): ResponseEntity<Page<FeedDto.Response>> {
-        val feedList = feedService.getPage(offset, limit)
+        val feedList = feedService.getPage(offset, limit, user)
 
         return ResponseEntity.ok().body(
             feedList.map {
