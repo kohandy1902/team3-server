@@ -120,7 +120,7 @@ class UserController(
                 return ResponseEntity.ok().build()
             }
         }
-        throw UserDoesNotExistException("user not exist")
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @PostMapping("/refuse/{user_id}/")
@@ -136,7 +136,7 @@ class UserController(
                 return ResponseEntity.ok().build()
             }
         }
-        throw UserDoesNotExistException("user not exist")
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @GetMapping("/following/")
