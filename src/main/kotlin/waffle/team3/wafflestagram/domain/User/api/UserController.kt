@@ -95,11 +95,12 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val followUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
-        val erase1 = user.following.removeIf { it.user.id == userId }
-        val erase2 = followUser.follower.removeIf { it.user.id == user.id }
+        val erase1 = currUser.following.removeIf { it.user.id == userId }
+        val erase2 = followUser.follower.removeIf { it.user.id == currUser.id }
         if (erase1 && erase2) {
-            userService.saveUser(user)
+            userService.saveUser(currUser)
             userService.saveUser(followUser)
             return ResponseEntity.ok().build()
         }
