@@ -59,7 +59,7 @@ class UserService(
     fun getUser(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
         if (!user.public) {
-            user.follower.find { it.user.email == user.email } ?: throw UserException("not public")
+            user.follower.find { it.user.email == currentUser.email } ?: throw UserException("not public")
         }
         return user
     }
