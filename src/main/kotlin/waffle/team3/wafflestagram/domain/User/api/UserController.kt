@@ -90,7 +90,6 @@ class UserController(
     }
 
     @DeleteMapping("/unfollow/{user_id}/")
-    @Transactional
     fun unfollowRequest(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long,
