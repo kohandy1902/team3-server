@@ -107,11 +107,12 @@ class FeedService(
     fun getPage(offset: Int, number: Int, user: User): Page<Feed> {
         val feeds = mutableListOf<Feed>()
         for (followingUser in user.following) {
-            for (feed in feedRepository.findByUserOrderByUpdatedAtDesc(followingUser.user)) {
-                feeds.add(feed)
+            for (f in followingUser.user.feeds) {
+                feeds.add(f)
             }
         }
-        return PageImpl(feeds, PageRequest.of(offset, number), feeds.size.toLong())
+        val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
+        return PageImpl(sortedFeeds, PageRequest.of(offset, number), sortedFeeds.size.toLong())
     }
 
     @Transactional

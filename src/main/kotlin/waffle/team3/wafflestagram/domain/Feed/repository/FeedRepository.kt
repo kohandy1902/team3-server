@@ -12,4 +12,5 @@ interface FeedRepository : JpaRepository<Feed, Long> {
 
     fun findByOrderByUpdatedAtDesc(user: User, pageable: Pageable): Page<Feed>
     fun findByUserOrderByUpdatedAtDesc(user: User): List<Feed>
+    fun findByUser(user: User): List<Feed>
 }
