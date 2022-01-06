@@ -25,9 +25,9 @@ class OauthController(
     fun callback(
         @PathVariable("socialLoginType") socialLoginType: SocialLoginType,
         @RequestParam("code") code: String
-    ): ResponseEntity<UserDto.Response> {
+    ): ResponseEntity<String> {
         val accessToken = oauthService.requestAccessToken(socialLoginType, code)
         val user = oauthService.findUser(socialLoginType, accessToken)
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body("success")
     }
 }

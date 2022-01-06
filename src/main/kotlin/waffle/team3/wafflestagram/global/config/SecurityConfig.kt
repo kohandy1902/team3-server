@@ -78,6 +78,8 @@ class SecurityConfig(
                 }
             }
             .logout()
+            .logoutUrl("/api/v1/users/signout/")
+            .logoutSuccessUrl("/swagger-ui.html")
             .invalidateHttpSession(true)
             .deleteCookies("JSESSIONID")
     }
