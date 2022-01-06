@@ -73,41 +73,41 @@ class UserController(
     }
 
     @PostMapping("/follow/{user_id}/")
-    @Transactional
     fun followRequest(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val followUser = userService.getUserById(userId)
-        if (followUser == null || user.id == userId || user.following.any { it.user.id == userId })
-            return ResponseEntity.badRequest().build()
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        if (followUser == null || currUser.id == userId || currUser.following.any { it.user.id == userId })
+            throw UserDoesNotExistException("user not exist")
         if (followUser.public) {
-            followerUserService.addFollower(followUser, user)
-            followingUserService.addFollowing(user, followUser)
-            userService.saveUser(user)
+            followerUserService.addFollower(followUser, currUser)
+            followingUserService.addFollowing(currUser, followUser)
+            userService.saveUser(currUser)
             userService.saveUser(followUser)
         } else {
-            waitingFollowerUserService.addWaitingFollower(followUser, user)
+            waitingFollowerUserService.addWaitingFollower(followUser, currUser)
             userService.saveUser(followUser)
         }
         return ResponseEntity.ok().build()
     }
 
     @DeleteMapping("/unfollow/{user_id}/")
-    @Transactional
     fun unfollowRequest(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val followUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
-        val erase1 = user.following.removeIf { it.user.id == userId }
-        val erase2 = followUser.follower.removeIf { it.user.id == user.id }
+        val erase1 = currUser.following.removeIf { it.user.id == userId }
+        val erase2 = followUser.follower.removeIf { it.user.id == currUser.id }
         if (erase1 && erase2) {
-            userService.saveUser(user)
+            userService.saveUser(currUser)
             userService.saveUser(followUser)
             return ResponseEntity.ok().build()
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Not following User")
     }
 
     @PostMapping("/approve/{user_id}/")
@@ -115,16 +115,17 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
-        for (waitingFollower in user.waitingFollower) {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        for (waitingFollower in currUser.waitingFollower) {
             if (waitingFollower.user.id == userId) {
-                followingUserService.addFollowing(waitingFollower.user, user)
-                followerUserService.addFollower(user, waitingFollower.user)
-                user.waitingFollower.remove(waitingFollower)
-                userService.saveUser(user)
+                followingUserService.addFollowing(waitingFollower.user, currUser)
+                followerUserService.addFollower(currUser, waitingFollower.user)
+                currUser.waitingFollower.remove(waitingFollower)
+                userService.saveUser(currUser)
                 return ResponseEntity.ok().build()
             }
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @PostMapping("/refuse/{user_id}/")
@@ -132,14 +133,15 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
-        for (waitingFollower in user.waitingFollower) {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        for (waitingFollower in currUser.waitingFollower) {
             if (waitingFollower.user.id == userId) {
-                user.waitingFollower.remove(waitingFollower)
-                userService.saveUser(user)
+                currUser.waitingFollower.remove(waitingFollower)
+                userService.saveUser(currUser)
                 return ResponseEntity.ok().build()
             }
         }
-        return ResponseEntity.badRequest().build()
+        throw UserDoesNotExistException("Didn't Request Follow")
     }
 
     @GetMapping("/following/")
@@ -148,7 +150,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<FollowingUserDto.Response>> {
-        val result = convertSetToPage(user.following, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.following, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowingUserDto.Response(it)
@@ -162,7 +165,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<FollowerUserDto.Response>> {
-        val result = convertSetToPage(user.follower, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.follower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowerUserDto.Response(it)
@@ -176,7 +180,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<WaitingFollowerUserDto.Response>> {
-        val result = convertSetToPage(user.waitingFollower, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.waitingFollower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 WaitingFollowerUserDto.Response(it)
