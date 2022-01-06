@@ -53,14 +53,6 @@ class UserController(
         }
     }
 
-    @GetMapping("/signout/")
-    fun signout(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        if(auth != null && auth.isAuthenticated)
-            SecurityContextLogoutHandler().logout(request, response, auth)
-        return ResponseEntity.ok("Signout Success")
-    }
-
     @GetMapping("/me/")
     fun getMe(@CurrentUser user: User): ResponseEntity<UserDto.Response> {
         return ResponseEntity.ok().body(UserDto.Response(user))

@@ -77,10 +77,5 @@ class SecurityConfig(
                     handler!!.onAuthenticationFailure(request, response, exception)
                 }
             }
-            .logout()
-            .logoutUrl("/api/v1/users/signout/")
-            .logoutSuccessUrl("/swagger-ui.html")
-            .invalidateHttpSession(true)
-            .deleteCookies("JSESSIONID")
     }
 }
