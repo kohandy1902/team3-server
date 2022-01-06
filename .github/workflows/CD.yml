@@ -68,6 +68,7 @@ jobs:
                   --application-name waffleapp \
                   --deployment-config-name CodeDeployDefault.AllAtOnce \
                   --deployment-group-name dev \
+                  --file-exists-behavior OVERWRITE \
                   --s3-location bucket=waffle-deploy,bundleType=zip,key=waffle-team3-server.zip \
                   --region ap-northeast-2
 
