@@ -78,4 +78,26 @@ class FeedController(
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The feed does not exist.")
         }
     }
+
+    @PostMapping("/like/{feed_id}/")
+    fun addLike(
+        @PathVariable("feed_id") feedId: Long,
+        @CurrentUser user: User
+    ): ResponseEntity<FeedDto.Response> {
+        val feed = feedService.addLike(feedId, user)
+
+        return ResponseEntity
+            .status(201)
+            .body(FeedDto.Response(feed))
+    }
+
+    @DeleteMapping("/like/{feed_id}/")
+    fun deleteLike(
+        @PathVariable("feed_id") feedId: Long,
+        @CurrentUser user: User
+    ): ResponseEntity<FeedDto.Response> {
+        val feed = feedService.deleteLike(feedId, user)
+
+        return ResponseEntity.status(200).body(FeedDto.Response(feed))
+    }
 }

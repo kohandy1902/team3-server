@@ -3,6 +3,7 @@ package waffle.team3.wafflestagram.domain.Feed.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.BatchSize
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
+import waffle.team3.wafflestagram.domain.Like.model.Like
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
@@ -23,6 +24,11 @@ class Feed(
     var photoKeys: String = "",
     @Column
     var content: String = "",
+
+    @BatchSize(size = 100)
+    @Column(name = "likes")
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")
+    var likes: MutableList<Like> = mutableListOf(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

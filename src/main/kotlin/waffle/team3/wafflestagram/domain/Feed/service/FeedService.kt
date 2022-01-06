@@ -8,6 +8,7 @@ import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
 import waffle.team3.wafflestagram.domain.Feed.exception.FeedDoesNotExistException
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
+import waffle.team3.wafflestagram.domain.Like.model.Like
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
@@ -108,5 +109,31 @@ class FeedService(
 //            s3Controller.deletePhoto(photoKey)
 //        }
         feedRepository.delete(feed)
+    }
+
+    @Transactional
+    fun addLike(id: Long, user: User): Feed {
+        val feed = feedRepository.findByIdOrNull(id)
+            ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+
+        val like = Like(feed, user)
+        feed.likes.add(like)
+
+        return feed
+    }
+
+    @Transactional
+    fun deleteLike(id: Long, user: User): Feed {
+        val feed = feedRepository.findByIdOrNull(id)
+            ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+
+        val likes = feed.likes
+        val deletedLike = likes.find { it.user == user }
+            ?: throw UserDoesNotExistException("You did not add like to this feed.")
+        likes.remove(deletedLike)
+
+        feed.likes = likes
+
+        return feed
     }
 }
