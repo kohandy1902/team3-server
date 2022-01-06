@@ -35,8 +35,13 @@ if [ ! -z "${TARGET_PID}" ]; then
     sudo kill ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port="${TARGET_PORT}" -Dspring.profiles.active=dev "${JAR_NAME}" \
-> $REPOSITORY/nohup.out 2>&1 &
+INFO_REPOSITORY=${REPOSITORY}/src/main/resources
+
+nohup java -jar -Dserver.port="${TARGET_PORT}" -Dspring.profiles.active=dev \
+    -Dspring.config.location=${INFO_REPOSITORY}/application-dbInfo.properties,\
+    ${INFO_REPOSITORY}/application-s3.properties,\
+    ${INFO_REPOSITORY}/application-oauth.properties \
+    "${JAR_NAME}" > ${REPOSITORY}/nohup.out 2>&1 &
 
 echo "> Now new WAS runs at ${TARGET_PORT}"
 exit 0

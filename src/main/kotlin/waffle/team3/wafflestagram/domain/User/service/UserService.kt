@@ -3,7 +3,6 @@ package waffle.team3.wafflestagram.domain.User.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
@@ -64,12 +63,10 @@ class UserService(
         return user
     }
 
-    @Transactional
     fun getUserById(id: Long): User? {
         return userRepository.findByIdOrNull(id)
     }
 
-    @Transactional
     fun saveUser(user: User) {
         userRepository.save(user)
     }
