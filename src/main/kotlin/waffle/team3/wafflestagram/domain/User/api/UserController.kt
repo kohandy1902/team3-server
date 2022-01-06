@@ -6,9 +6,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,8 +27,6 @@ import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.domain.User.service.WaitingFollowerUserService
 import waffle.team3.wafflestagram.global.auth.CurrentUser
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
 @RestController
