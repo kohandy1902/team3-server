@@ -112,12 +112,13 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
-        for (waitingFollower in user.waitingFollower) {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        for (waitingFollower in currUser.waitingFollower) {
             if (waitingFollower.user.id == userId) {
-                followingUserService.addFollowing(waitingFollower.user, user)
-                followerUserService.addFollower(user, waitingFollower.user)
-                user.waitingFollower.remove(waitingFollower)
-                userService.saveUser(user)
+                followingUserService.addFollowing(waitingFollower.user, currUser)
+                followerUserService.addFollower(currUser, waitingFollower.user)
+                currUser.waitingFollower.remove(waitingFollower)
+                userService.saveUser(currUser)
                 return ResponseEntity.ok().build()
             }
         }
@@ -129,10 +130,11 @@ class UserController(
         @CurrentUser user: User,
         @PathVariable("user_id") userId: Long
     ): ResponseEntity<UserDto.Response> {
-        for (waitingFollower in user.waitingFollower) {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        for (waitingFollower in currUser.waitingFollower) {
             if (waitingFollower.user.id == userId) {
-                user.waitingFollower.remove(waitingFollower)
-                userService.saveUser(user)
+                currUser.waitingFollower.remove(waitingFollower)
+                userService.saveUser(currUser)
                 return ResponseEntity.ok().build()
             }
         }
