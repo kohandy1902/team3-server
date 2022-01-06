@@ -147,7 +147,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<FollowingUserDto.Response>> {
-        val result = convertSetToPage(user.following, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.following, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowingUserDto.Response(it)
@@ -161,7 +162,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<FollowerUserDto.Response>> {
-        val result = convertSetToPage(user.follower, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.follower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowerUserDto.Response(it)
@@ -175,7 +177,8 @@ class UserController(
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<WaitingFollowerUserDto.Response>> {
-        val result = convertSetToPage(user.waitingFollower, PageRequest.of(offset, limit))
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val result = convertSetToPage(currUser.waitingFollower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 WaitingFollowerUserDto.Response(it)
