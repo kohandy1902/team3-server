@@ -3,6 +3,7 @@ package waffle.team3.wafflestagram.domain.Feed.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
+import waffle.team3.wafflestagram.domain.Photo.dto.PhotoDto
 import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
@@ -12,6 +13,7 @@ class FeedDto {
     data class Response(
         val id: Long,
         val author: UserDto.Response,
+        val photos: List<PhotoDto.Response>,
         val content: String,
         val comments: List<CommentDto.Response>,
         val likes: List<UserDto.Response>,
@@ -27,6 +29,7 @@ class FeedDto {
         constructor(feed: Feed) : this(
             id = feed.id,
             author = UserDto.Response(feed.user),
+            photos = feed.photos.let { it.map { photo -> PhotoDto.Response(photo) } },
             content = feed.content,
             comments = feed.comments.let { it.map { comment -> CommentDto.Response(comment) } },
             likes = feed.likes.let { it.map { like -> UserDto.Response(like.user) } },
@@ -40,6 +43,7 @@ class FeedDto {
 
     data class UploadRequest(
         val content: String,
+        val imageKeys: List<String>,
         val tags: List<String>,
         @JsonProperty("user_tags")
         val userTags: List<String>
@@ -47,6 +51,7 @@ class FeedDto {
 
     data class UpdateRequest(
         val content: String,
+        val imageKeys: List<String>,
         val tags: List<String>,
         @JsonProperty("user_tags")
         val userTags: List<String>
