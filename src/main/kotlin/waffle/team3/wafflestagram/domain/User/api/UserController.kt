@@ -17,6 +17,7 @@ import waffle.team3.wafflestagram.domain.User.dto.FollowerUserDto
 import waffle.team3.wafflestagram.domain.User.dto.FollowingUserDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
+import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
@@ -193,6 +194,28 @@ class UserController(
     ): ResponseEntity<Page<FollowingUserDto.Response>> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val result = convertSetToPage(currUser.following, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowingUserDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/following/{user_id}/")
+    fun getFollowingListByUser(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<Page<FollowingUserDto.Response>> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val otherUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
+
+        if(!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
+
+        val result = convertSetToPage(otherUser.following, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowingUserDto.Response(it)
