@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.domain.User.dto
 
-import org.springframework.beans.factory.annotation.Value
 import waffle.team3.wafflestagram.domain.User.model.User
 import javax.validation.constraints.NotBlank
 

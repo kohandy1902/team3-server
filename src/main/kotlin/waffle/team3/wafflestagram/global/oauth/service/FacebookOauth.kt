@@ -85,7 +85,8 @@ class FacebookOauth(
         if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
             return userRepository.findByEmail(hashmap["email"].toString()) ?: userRepository.save(
-                User(email = hashmap["email"].toString(), profilePhotoURL = default_s3URL))
+                User(email = hashmap["email"].toString(), profilePhotoURL = default_s3URL)
+            )
         } else throw AccessTokenException("Get user profile failed")
     }
 }
