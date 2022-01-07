@@ -14,6 +14,8 @@ import waffle.team3.wafflestagram.global.s3.service.S3Service
 
 @Service
 class UserService(
+    private val followingUserService: FollowingUserService,
+    private val followerUserService: FollowerUserService,
     private val userRepository: UserRepository,
     private val s3Service: S3Service,
     private val passwordEncoder: PasswordEncoder,
@@ -47,6 +49,10 @@ class UserService(
     @Transactional
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
+
+        if (!currentUser.public && profileRequest.public == true)
+            flushWaitingFollower(currentUser)
+
         profileRequest.public?.let { currentUser.public = it }
         profileRequest.name?.let { currentUser.name = it }
         profileRequest.nickname?.let {
@@ -78,6 +84,17 @@ class UserService(
     fun getProfilePhoto(userId: Long): String {
         val user = userRepository.findByIdOrNull(userId) ?: throw UserDoesNotExistException("invalid user id")
         return user.profilePhotoURL
+    }
+
+    @Transactional
+    fun flushWaitingFollower(user: User) {
+        for (waiting in user.waitingFollower) {
+            followingUserService.addFollowing(waiting.user, user)
+            followerUserService.addFollower(user, waiting.user)
+            saveUser(waiting.user)
+        }
+        user.waitingFollower.clear()
+        saveUser(user)
     }
 
     @Transactional
