@@ -48,6 +48,16 @@ class UserController(
         }
     }
 
+    @GetMapping("/search/{nickname_prefix}/")
+    fun search(
+        @PathVariable("nickname_prefix") nickname_prefix: String,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+    ): ResponseEntity<Page<UserDto.Response>> {
+        val users = userService.searchUsersByNickname(nickname_prefix, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(users.map { UserDto.Response(it) })
+    }
+
     @PostMapping("/profilePhoto/")
     fun setProfilePhoto(
         @CurrentUser user: User,
