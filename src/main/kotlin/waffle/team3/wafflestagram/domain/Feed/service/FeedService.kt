@@ -106,7 +106,8 @@ class FeedService(
 
     fun getPage(offset: Int, number: Int, user: User): Page<Feed> {
         val feeds = mutableListOf<Feed>()
-        for (followingUser in user.following) {
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("")
+        for (followingUser in currUser.following) {
             for (f in followingUser.user.feeds) {
                 feeds.add(f)
             }
