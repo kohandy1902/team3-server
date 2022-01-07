@@ -163,6 +163,10 @@ class FeedService(
 
         if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
 
+        for (photo in feed.photos) {
+            s3Controller.deletePhoto(photo.key)
+        }
+
         feedRepository.delete(feed)
     }
 
