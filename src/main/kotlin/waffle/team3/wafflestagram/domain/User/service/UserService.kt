@@ -59,7 +59,7 @@ class UserService(
     fun getUserByNickname(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
         if (!user.public) {
-            user.follower.find { it.user.id == user.id } ?: throw UserException("not public")
+            user.follower.find { it.user.id == currentUser.id } ?: throw UserException("not public")
         }
         return user
     }
@@ -68,7 +68,7 @@ class UserService(
     fun getUserById(currentUser: User, id: Long): User {
         val user = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("invalid id")
         if (!user.public) {
-            user.follower.find { it.user.id == user.id } ?: throw UserException("not public")
+            user.follower.find { it.user.id == currentUser.id } ?: throw UserException("not public")
         }
         return user
     }
