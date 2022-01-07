@@ -68,7 +68,7 @@ class UserService(
     @Transactional
     fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String? {
         val currentUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("invalid user id")
-        currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
+        // currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
         currentUser.profilePhotoKey = profilePhotoRequest.profilePhotoKey
         currentUser.profilePhotoURL = s3URL + currentUser.profilePhotoKey
         userRepository.save(currentUser)
