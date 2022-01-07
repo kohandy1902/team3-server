@@ -150,7 +150,7 @@ class FeedService(
         val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
         val otherUser = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
 
-        if (!otherUser.follower.any { it.user.id == currUser.id })
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
         return feedRepository.findByUserOrderByUpdatedAtDesc(PageRequest.of(offset, number), otherUser)
