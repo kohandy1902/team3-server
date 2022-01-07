@@ -59,6 +59,14 @@ class UserController(
         return ResponseEntity.ok().body(users.map { UserDto.Response(it) })
     }
 
+    @GetMapping("/{email}/")
+    fun getByEmail(
+        @PathVariable("email") email: String,
+    ): ResponseEntity<UserDto.Response> {
+        val user = userService.getUserByEmail(email)
+        return ResponseEntity.ok().body(UserDto.Response(user))
+    }
+
     @PostMapping("/profilePhoto/")
     fun setProfilePhoto(
         @CurrentUser user: User,

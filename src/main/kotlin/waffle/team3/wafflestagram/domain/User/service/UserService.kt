@@ -48,6 +48,15 @@ class UserService(
         )
     }
 
+    fun getUserByEmail(email: String): User {
+        return userRepository.findByEmail(email) ?: userRepository.save(
+            User(
+                email = email,
+                profilePhotoURL = default_s3URL,
+            )
+        )
+    }
+
     @Transactional
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
