@@ -11,6 +11,7 @@ import waffle.team3.wafflestagram.domain.Feed.exception.FeedNotAllowedException
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
 import waffle.team3.wafflestagram.domain.Like.model.Like
+import waffle.team3.wafflestagram.domain.Photo.model.Photo
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
 import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
@@ -32,13 +33,19 @@ class FeedService(
     private val userTagRepository: UserTagRepository,
     private val tagRepository: TagRepository,
     private val followingUserRepository: FollowingUserRepository,
-    private val s3Controller: S3Controller
+    private val s3Controller: S3Controller,
 ) {
 
     @Transactional
     // 사람 태그하기, 위치 추가 기능
     fun upload(uploadRequest: FeedDto.UploadRequest, user: User): Feed {
         val feed = Feed(content = uploadRequest.content, user = user)
+
+        val photoList = mutableListOf<Photo>()
+        for (key in uploadRequest.imageKeys) {
+            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key", feed)
+            photoList.add(photo)
+        }
 
         val userTagList = mutableListOf<UserTag>()
         for (nickname in uploadRequest.userTags) {
@@ -57,6 +64,7 @@ class FeedService(
 
         feed.tags = tagList
         feed.userTags = userTagList
+        feed.photos = photoList
 
         return feedRepository.save(feed)
     }
@@ -67,6 +75,12 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this ID does not exist.")
 
         if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
+
+        val photoList = mutableListOf<Photo>()
+        for (key in updateRequest.imageKeys) {
+            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key", feed)
+            photoList.add(photo)
+        }
 
         val userTagList = mutableListOf<UserTag>()
         for (nickname in updateRequest.userTags) {
@@ -96,6 +110,7 @@ class FeedService(
             tags = tagList
             userTags = userTagList
             updatedAt = LocalDateTime.now()
+            photos = photoList
         }
 
         feedRepository.save(feed)
@@ -132,11 +147,6 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
 
         if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
-
-//        val photoKeys = feed.photoKeys.split(",")
-//        for (photoKey: String in photoKeys) {
-//            s3Controller.deletePhoto(photoKey)
-//        }
 
         feedRepository.delete(feed)
     }
