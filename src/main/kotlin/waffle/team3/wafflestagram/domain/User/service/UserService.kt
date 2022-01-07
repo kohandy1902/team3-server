@@ -66,7 +66,6 @@ class UserService(
         for (waiting in user.waitingFollower) {
             followingUserService.addFollowing(waiting.user, user)
             followerUserService.addFollower(user, waiting.user)
-            saveUser(user)
             saveUser(waiting.user)
         }
         user.waitingFollower.clear()
