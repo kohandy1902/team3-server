@@ -1,6 +1,7 @@
 package waffle.team3.wafflestagram.domain.Feed.api
 
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -62,6 +63,37 @@ class FeedController(
         @CurrentUser user: User
     ): ResponseEntity<Page<FeedDto.Response>> {
         val feedList = feedService.getPage(offset, limit, user)
+
+        return ResponseEntity.ok().body(
+            feedList.map {
+                FeedDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/self/")
+    fun getSelfFeeds(
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @CurrentUser user: User
+    ): ResponseEntity<Page<FeedDto.Response>> {
+        val feedList = feedService.getSelfFeeds(offset, limit, user)
+
+        return ResponseEntity.ok().body(
+            feedList.map {
+                FeedDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/other/{user_id}/")
+    fun getOtherUserFeeds(
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @CurrentUser user: User,
+        @PathVariable("user_id") userId: Long
+    ): ResponseEntity<Page<FeedDto.Response>> {
+        val feedList = feedService.getOtherUserFeeds(offset, limit, user, userId)
 
         return ResponseEntity.ok().body(
             feedList.map {

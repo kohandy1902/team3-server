@@ -131,7 +131,7 @@ class FeedService(
 
     fun getPage(offset: Int, number: Int, user: User): Page<Feed> {
         val feeds = mutableListOf<Feed>()
-        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("")
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
         for (followingUser in currUser.following) {
             for (f in followingUser.user.feeds) {
                 feeds.add(f)
@@ -139,6 +139,21 @@ class FeedService(
         }
         val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
         return PageImpl(sortedFeeds, PageRequest.of(offset, number), sortedFeeds.size.toLong())
+    }
+
+    fun getSelfFeeds(offset: Int, number: Int, user: User): Page<Feed> {
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+        return feedRepository.findByUserOrderByUpdatedAtDesc(PageRequest.of(offset, number), currUser)
+    }
+
+    fun getOtherUserFeeds(offset: Int, number: Int, user: User, id: Long): Page<Feed> {
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+        val otherUser = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+
+        if (!otherUser.follower.any { it.user.id == currUser.id })
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+
+        return feedRepository.findByUserOrderByUpdatedAtDesc(PageRequest.of(offset, number), otherUser)
     }
 
     @Transactional
