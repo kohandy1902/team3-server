@@ -12,6 +12,7 @@ class UserDto {
         val public: Boolean = true,
         val website: String? = null,
         val bio: String? = null,
+        val profilePhotoURL: String,
     ) {
         constructor(user: User) : this(
             id = user.id,
@@ -21,6 +22,7 @@ class UserDto {
             public = user.public,
             website = user.website,
             bio = user.bio,
+            profilePhotoURL = user.profilePhotoURL,
         )
     }
     data class SignupRequest(
