@@ -25,7 +25,6 @@ class Feed(
     var content: String = "",
 
     @BatchSize(size = 100)
-    @Column(name = "photos")
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")
     var photos: MutableList<Photo> = mutableListOf(),
 

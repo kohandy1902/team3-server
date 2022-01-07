@@ -43,7 +43,7 @@ class FeedService(
 
         val photoList = mutableListOf<Photo>()
         for (key in uploadRequest.imageKeys) {
-            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key")
+            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key", feed)
             photoList.add(photo)
         }
 
@@ -78,7 +78,7 @@ class FeedService(
 
         val photoList = mutableListOf<Photo>()
         for (key in updateRequest.imageKeys) {
-            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key")
+            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key", feed)
             photoList.add(photo)
         }
 
