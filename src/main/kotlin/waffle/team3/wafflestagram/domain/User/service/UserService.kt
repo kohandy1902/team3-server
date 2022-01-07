@@ -126,6 +126,6 @@ class UserService(
     }
 
     fun searchUsersByNickname(nickname_prefix: String, pageable: Pageable): Page<User> {
-       return userRepository.findByNicknameStartsWith(nickname_prefix, pageable) ?: Page.empty()
+        return userRepository.findByNicknameStartsWith(nickname_prefix, pageable) ?: Page.empty()
     }
 }
