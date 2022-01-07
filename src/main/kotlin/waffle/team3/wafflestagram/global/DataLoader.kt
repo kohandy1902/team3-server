@@ -23,7 +23,7 @@ class DataLoader(
     private val replyRepository: ReplyRepository,
 ) : ApplicationRunner {
     // 어플리케이션 동작 시 실행
-    @Value("cloud.aws.s3.photoURL_default")
+    @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
     override fun run(args: ApplicationArguments) {
         val newUser0 = User(email = "2harry@snu.ac.kr", password = "1234", profilePhotoURL = default_s3URL)

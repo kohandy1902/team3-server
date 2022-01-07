@@ -20,7 +20,7 @@ class UserService(
     private val s3Service: S3Service,
     private val passwordEncoder: PasswordEncoder,
 ) {
-    @Value("cloud.aws.s3.photoURL_default")
+    @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
 
     @Transactional
@@ -68,13 +68,13 @@ class UserService(
         userRepository.save(currentUser)
     }
 
-    @Value("cloud.aws.s3.photoURL")
+    @Value("\${cloud.aws.s3.photoURL}")
     lateinit var s3URL: String
 
     @Transactional
     fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String? {
         val currentUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("invalid user id")
-        currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
+        // currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
         currentUser.profilePhotoKey = profilePhotoRequest.profilePhotoKey
         currentUser.profilePhotoURL = s3URL + currentUser.profilePhotoKey
         userRepository.save(currentUser)

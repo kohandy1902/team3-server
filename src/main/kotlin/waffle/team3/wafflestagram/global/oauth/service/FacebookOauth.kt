@@ -71,7 +71,7 @@ class FacebookOauth(
         } else throw AccessTokenException("Access token Failed")
     }
 
-    @Value("cloud.aws.s3.photoURL_default")
+    @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
 
     @Override
