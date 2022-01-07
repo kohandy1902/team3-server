@@ -17,6 +17,7 @@ import waffle.team3.wafflestagram.domain.User.dto.FollowerUserDto
 import waffle.team3.wafflestagram.domain.User.dto.FollowingUserDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
+import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
@@ -144,7 +145,7 @@ class UserController(
     @PostMapping("/approve/{user_id}/")
     fun approveRequest(
         @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         for (waitingFollower in currUser.waitingFollower) {
@@ -163,7 +164,7 @@ class UserController(
     @PostMapping("/refuse/{user_id}/")
     fun refuseRequest(
         @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         for (waitingFollower in currUser.waitingFollower) {
@@ -174,6 +175,15 @@ class UserController(
             }
         }
         throw UserDoesNotExistException("Didn't Request Follow")
+    }
+
+    @GetMapping("/isFollowing/{user_id}/")
+    fun getIsFollowing(
+        @CurrentUser user: User,
+        @PathVariable("user_id") userId: Long,
+    ): Boolean {
+        val currUser = userService.getUserById(user.id) ?: return false
+        return currUser.following.any { it.user.id == userId }
     }
 
     @GetMapping("/following/")
@@ -191,6 +201,28 @@ class UserController(
         )
     }
 
+    @GetMapping("/following/{user_id}/")
+    fun getFollowingListByUser(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<Page<FollowingUserDto.Response>> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val otherUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
+
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
+
+        val result = convertSetToPage(otherUser.following, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowingUserDto.Response(it)
+            }
+        )
+    }
+
     @GetMapping("/follower/")
     fun getFollowerList(
         @CurrentUser user: User,
@@ -199,6 +231,28 @@ class UserController(
     ): ResponseEntity<Page<FollowerUserDto.Response>> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val result = convertSetToPage(currUser.follower, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowerUserDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/follower/{user_id}/")
+    fun getFollowerListByUser(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<Page<FollowerUserDto.Response>> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val otherUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
+
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
+
+        val result = convertSetToPage(otherUser.follower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowerUserDto.Response(it)

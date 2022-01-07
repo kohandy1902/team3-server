@@ -131,7 +131,7 @@ class FeedService(
 
     fun getPage(offset: Int, number: Int, user: User): Page<Feed> {
         val feeds = mutableListOf<Feed>()
-        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("")
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
         for (followingUser in currUser.following) {
             for (f in followingUser.user.feeds) {
                 feeds.add(f)
@@ -141,12 +141,31 @@ class FeedService(
         return PageImpl(sortedFeeds, PageRequest.of(offset, number), sortedFeeds.size.toLong())
     }
 
+    fun getSelfFeeds(offset: Int, number: Int, user: User): Page<Feed> {
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+        return feedRepository.findByUserOrderByUpdatedAtDesc(PageRequest.of(offset, number), currUser)
+    }
+
+    fun getOtherUserFeeds(offset: Int, number: Int, user: User, id: Long): Page<Feed> {
+        val currUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+        val otherUser = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id })
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+
+        return feedRepository.findByUserOrderByUpdatedAtDesc(PageRequest.of(offset, number), otherUser)
+    }
+
     @Transactional
     fun delete(id: Long, user: User) {
         val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
 
         if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
+
+        for (photo in feed.photos) {
+            s3Controller.deletePhoto(photo.key)
+        }
 
         feedRepository.delete(feed)
     }
