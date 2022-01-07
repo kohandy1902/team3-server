@@ -75,10 +75,10 @@ class FacebookOauth(
     lateinit var default_s3URL: String
 
     @Override
-    override fun findUser(token: OauthToken): User {
+    override fun findUser(token: String): User {
         val restTemplate = RestTemplateBuilder().build()
         val headers = HttpHeaders()
-        headers.add("Authorization", "Bearer ${token.access_token}")
+        headers.add("Authorization", "Bearer $token")
         val request = HttpEntity<Map<String, String>>(headers)
         val responseEntity = restTemplate.exchange(facebook_userinfo_url!!, HttpMethod.GET, request, String::class.java)
         println(responseEntity.body)
