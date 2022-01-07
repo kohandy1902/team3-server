@@ -70,6 +70,9 @@ class GoogleOauth(
         } else throw AccessTokenException("Access token Failed")
     }
 
+    @Value("cloud.aws.s3.photoURL_default")
+    lateinit var default_s3URL: String
+
     @Override
     override fun findUser(token: OauthToken): User {
         val restTemplate = RestTemplateBuilder().build()
@@ -79,7 +82,9 @@ class GoogleOauth(
         val responseEntity = restTemplate.exchange(google_userinfo_url!!, HttpMethod.GET, request, String::class.java)
         if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
-            return userRepository.findByEmail(hashmap["email"].toString()) ?: userRepository.save(User(email = hashmap["email"].toString()))
+            return userRepository.findByEmail(hashmap["email"].toString()) ?: userRepository.save(
+                User(email = hashmap["email"].toString(), profilePhotoURL = default_s3URL)
+            )
         } else throw AccessTokenException("Get user profile failed")
     }
 }

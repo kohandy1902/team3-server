@@ -1,5 +1,6 @@
 package waffle.team3.wafflestagram.global
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
@@ -22,9 +23,11 @@ class DataLoader(
     private val replyRepository: ReplyRepository,
 ) : ApplicationRunner {
     // 어플리케이션 동작 시 실행
+    @Value("cloud.aws.s3.photoURL_default")
+    lateinit var default_s3URL: String
     override fun run(args: ApplicationArguments) {
-        val newUser0 = User(email = "2harry@snu.ac.kr", password = "1234")
-        val newUser1 = User(email = "970707zzang@naver.com", password = "1234")
+        val newUser0 = User(email = "2harry@snu.ac.kr", password = "1234", profilePhotoURL = default_s3URL)
+        val newUser1 = User(email = "970707zzang@naver.com", password = "1234", profilePhotoURL = default_s3URL)
         userRepository.save(newUser0)
         userRepository.save(newUser1)
         val newFeed = feedRepository.save(
