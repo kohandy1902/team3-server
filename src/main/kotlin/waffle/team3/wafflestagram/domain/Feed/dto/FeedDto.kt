@@ -3,7 +3,6 @@ package waffle.team3.wafflestagram.domain.Feed.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
-import waffle.team3.wafflestagram.domain.Like.dto.LikeDto
 import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
@@ -15,7 +14,7 @@ class FeedDto {
         val author: UserDto.Response,
         val content: String,
         val comments: List<CommentDto.Response>,
-        val likes: List<LikeDto.Response>,
+        val likes: List<UserDto.Response>,
         val likeSum: Int,
         val tags: List<TagDto.Response>,
         @JsonProperty("user_tags")
@@ -30,7 +29,7 @@ class FeedDto {
             author = UserDto.Response(feed.user),
             content = feed.content,
             comments = feed.comments.let { it.map { comment -> CommentDto.Response(comment) } },
-            likes = feed.likes.let { it.map { like -> LikeDto.Response(like) } },
+            likes = feed.likes.let { it.map { like -> UserDto.Response(like.user) } },
             likeSum = feed.likes.count(),
             tags = feed.tags.let { it.map { tag -> TagDto.Response(tag.content) } },
             userTags = feed.userTags.let { it.map { userTag -> UserTagDto.Response(userTag.user.nickname) } },
