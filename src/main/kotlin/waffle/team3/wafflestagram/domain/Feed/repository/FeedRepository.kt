@@ -10,7 +10,5 @@ import waffle.team3.wafflestagram.domain.User.model.User
 @Repository
 interface FeedRepository : JpaRepository<Feed, Long> {
 
-    fun findByOrderByUpdatedAtDesc(user: User, pageable: Pageable): Page<Feed>
-    fun findByUserOrderByUpdatedAtDesc(user: User): List<Feed>
-    fun findByUser(user: User): List<Feed>
+    fun findByUserOrderByUpdatedAtDesc(pageable: Pageable, user: User): Page<Feed>
 }
