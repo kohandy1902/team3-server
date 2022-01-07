@@ -1,6 +1,8 @@
 package waffle.team3.wafflestagram.domain.User.service
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -121,5 +123,9 @@ class UserService(
 
     fun saveUser(user: User) {
         userRepository.save(user)
+    }
+
+    fun searchUsersByNickname(nickname_prefix: String, pageable: Pageable): Page<User> {
+        return userRepository.findByNicknameStartsWith(nickname_prefix, pageable)
     }
 }
