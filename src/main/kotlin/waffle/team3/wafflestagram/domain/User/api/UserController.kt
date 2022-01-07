@@ -176,6 +176,15 @@ class UserController(
         throw UserDoesNotExistException("Didn't Request Follow")
     }
 
+    @GetMapping("/isFollowing/{user_id}/")
+    fun getIsFollowing(
+        @CurrentUser user: User,
+        @PathVariable("user_id") userId: Long,
+    ): Boolean {
+        val currUser = userService.getUserById(user.id) ?: return false
+        return currUser.following.any { it.user.id == userId }
+    }
+
     @GetMapping("/following/")
     fun getFollowingList(
         @CurrentUser user: User,
@@ -189,15 +198,6 @@ class UserController(
                 FollowingUserDto.Response(it)
             }
         )
-    }
-
-    @GetMapping("/following/{user_id}/")
-    fun getIsFollowing(
-        @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long,
-    ): Boolean {
-        val currUser = userService.getUserById(user.id) ?: return false
-        return currUser.following.any { it.user.id == userId }
     }
 
     @GetMapping("/follower/")
