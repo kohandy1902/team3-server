@@ -18,7 +18,7 @@ class UserService(
     private val s3Service: S3Service,
     private val passwordEncoder: PasswordEncoder,
 ) {
-    @Value("cloud.aws.s3.photoURL_default")
+    @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
 
     @Transactional
@@ -62,7 +62,7 @@ class UserService(
         userRepository.save(currentUser)
     }
 
-    @Value("cloud.aws.s3.photoURL")
+    @Value("\${cloud.aws.s3.photoURL}")
     lateinit var s3URL: String
 
     @Transactional
