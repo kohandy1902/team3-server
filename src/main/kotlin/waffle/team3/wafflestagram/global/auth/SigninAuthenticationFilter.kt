@@ -1,13 +1,16 @@
 package waffle.team3.wafflestagram.global.auth
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.minidev.json.reader.JsonWriter
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.global.auth.dto.LoginRequest
+import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
 import java.io.BufferedReader
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -29,7 +32,7 @@ class SigninAuthenticationFilter(
     ) {
         response.addHeader("Authentication", jwtTokenProvider.generateToken(authResult))
         response.status = HttpServletResponse.SC_OK
-        response.writer.write("success")
+        response.writer.print((authResult.principal as UserPrincipal).user.id)
     }
 
     override fun unsuccessfulAuthentication(
