@@ -12,14 +12,14 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
-import waffle.team3.wafflestagram.global.s3.service.S3Service
+import waffle.team3.wafflestagram.global.s3.controller.S3Controller
 
 @Service
 class UserService(
     private val followingUserService: FollowingUserService,
     private val followerUserService: FollowerUserService,
     private val userRepository: UserRepository,
-    private val s3Service: S3Service,
+    private val s3controller: S3Controller,
     private val passwordEncoder: PasswordEncoder,
 ) {
     @Value("\${cloud.aws.s3.photoURL_default}")
@@ -76,7 +76,7 @@ class UserService(
     @Transactional
     fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String? {
         val currentUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("invalid user id")
-        // currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
+        currentUser.profilePhotoKey?.let { s3controller.deletePhoto(it) }
         currentUser.profilePhotoKey = profilePhotoRequest.profilePhotoKey
         currentUser.profilePhotoURL = s3URL + currentUser.profilePhotoKey
         userRepository.save(currentUser)
