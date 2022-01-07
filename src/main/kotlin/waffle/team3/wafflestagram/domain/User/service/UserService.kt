@@ -1,5 +1,6 @@
 package waffle.team3.wafflestagram.domain.User.service
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -9,12 +10,17 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
+import waffle.team3.wafflestagram.global.s3.service.S3Service
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
+    private val s3Service: S3Service,
     private val passwordEncoder: PasswordEncoder,
 ) {
+    @Value("cloud.aws.s3.photoURL_default")
+    lateinit var default_s3URL: String
+
     @Transactional
     fun signup(signupRequest: UserDto.SignupRequest): User {
         if (userRepository.findByEmail(signupRequest.email) != null)
@@ -33,6 +39,7 @@ class UserService(
                 nickname = signupRequest.nickname,
                 birthday = signupRequest.birthday,
                 phoneNumber = signupRequest.phoneNumber,
+                profilePhotoURL = default_s3URL,
             )
         )
     }
@@ -53,6 +60,19 @@ class UserService(
         profileRequest.birthday?.let { currentUser.birthday = it }
         profileRequest.phoneNumber?.let { currentUser.phoneNumber = it }
         userRepository.save(currentUser)
+    }
+
+    @Value("cloud.aws.s3.photoURL")
+    lateinit var s3URL: String
+
+    @Transactional
+    fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String? {
+        val currentUser = userRepository.findByIdOrNull(user.id)!!
+        currentUser.profilePhotoKey?.let { s3Service.deleteObj(it) }
+        currentUser.profilePhotoKey = profilePhotoRequest.profilePhotoKey
+        currentUser.profilePhotoURL = s3URL + currentUser.profilePhotoKey
+        userRepository.save(currentUser)
+        return currentUser.profilePhotoURL
     }
 
     @Transactional

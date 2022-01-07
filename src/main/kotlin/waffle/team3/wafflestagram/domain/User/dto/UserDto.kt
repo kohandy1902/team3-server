@@ -1,5 +1,6 @@
 package waffle.team3.wafflestagram.domain.User.dto
 
+import org.springframework.beans.factory.annotation.Value
 import waffle.team3.wafflestagram.domain.User.model.User
 import javax.validation.constraints.NotBlank
 
@@ -12,6 +13,7 @@ class UserDto {
         val public: Boolean = true,
         val website: String? = null,
         val bio: String? = null,
+        val profilePhotoURL: String,
     ) {
         constructor(user: User) : this(
             id = user.id,
@@ -21,6 +23,7 @@ class UserDto {
             public = user.public,
             website = user.website,
             bio = user.bio,
+            profilePhotoURL = user.profilePhotoURL,
         )
     }
     data class SignupRequest(
@@ -44,5 +47,8 @@ class UserDto {
         val bio: String? = null,
         val birthday: String? = null,
         val phoneNumber: String? = null,
+    )
+    data class ProfilePhotoRequest(
+        val profilePhotoKey: String? = null,
     )
 }

@@ -29,12 +29,11 @@ class User(
     var website: String? = null,
     var bio: String? = null,
 
-    //  photo 의 경우 s3의 key 로 저장될 거 같습니다!
-    // @OneToOne(mappedBy = "user")
-    // var profilePhoto: Photo? = null,
-
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
     var feeds: MutableList<Feed> = mutableListOf(),
     var birthday: String? = null,
     var phoneNumber: String? = null,
+
+    var profilePhotoKey: String? = null,
+    var profilePhotoURL: String,
 ) : BaseTimeEntity()
