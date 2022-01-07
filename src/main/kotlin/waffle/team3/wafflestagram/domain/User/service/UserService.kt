@@ -43,7 +43,7 @@ class UserService(
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
 
-        if(!currentUser.public && profileRequest.public == true)
+        if (!currentUser.public && profileRequest.public == true)
             flushWaitingFollower(currentUser)
 
         profileRequest.public?.let { currentUser.public = it }
@@ -63,7 +63,7 @@ class UserService(
 
     @Transactional
     fun flushWaitingFollower(user: User) {
-        for(waiting in user.waitingFollower) {
+        for (waiting in user.waitingFollower) {
             followingUserService.addFollowing(waiting.user, user)
             followerUserService.addFollower(user, waiting.user)
             saveUser(user)

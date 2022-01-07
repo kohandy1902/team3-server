@@ -126,6 +126,7 @@ class UserController(
                 followerUserService.addFollower(currUser, waitingFollower.user)
                 currUser.waitingFollower.remove(waitingFollower)
                 userService.saveUser(currUser)
+                userService.saveUser(waitingFollower.user)
                 return ResponseEntity.ok().build()
             }
         }
