@@ -36,7 +36,7 @@ class OauthService(
         }
     }
 
-    fun findUser(socialLoginType: SocialLoginType, token: OauthToken): User {
+    fun findUser(socialLoginType: SocialLoginType, token: String): User {
         when (socialLoginType) {
             SocialLoginType.google -> return googleOauth.findUser(token)
             SocialLoginType.facebook -> return facebookOauth.findUser(token)

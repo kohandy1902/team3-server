@@ -6,5 +6,5 @@ import waffle.team3.wafflestagram.global.oauth.OauthToken
 interface SocialOauth {
     fun getOauthRedirectURL(): String
     fun requestAccessToken(code: String): OauthToken
-    fun findUser(token: OauthToken): User
+    fun findUser(token: String): User
 }

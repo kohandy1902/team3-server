@@ -24,10 +24,11 @@ class OauthController(
     @GetMapping("/{socialLoginType}/callback/")
     fun callback(
         @PathVariable("socialLoginType") socialLoginType: SocialLoginType,
-        @RequestParam("code") code: String
+        @RequestParam("accessToken") accessToken: String
     ): ResponseEntity<UserDto.Response> {
-        val accessToken = oauthService.requestAccessToken(socialLoginType, code)
+        // val accessToken = oauthService.requestAccessToken(socialLoginType, code)
         val user = oauthService.findUser(socialLoginType, accessToken)
+
         return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
     }
 }
