@@ -7,16 +7,18 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import waffle.team3.wafflestagram.domain.Feed.dto.FeedDto
 import waffle.team3.wafflestagram.domain.Feed.exception.FeedDoesNotExistException
+import waffle.team3.wafflestagram.domain.Feed.exception.FeedNotAllowedException
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
 import waffle.team3.wafflestagram.domain.Like.model.Like
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
+import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
+import waffle.team3.wafflestagram.domain.User.repository.FollowingUserRepository
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
-import waffle.team3.wafflestagram.domain.User.service.FollowingUserService
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
 import waffle.team3.wafflestagram.domain.UserTag.repository.UserTagRepository
 import waffle.team3.wafflestagram.global.s3.controller.S3Controller
@@ -29,7 +31,7 @@ class FeedService(
     private val userRepository: UserRepository,
     private val userTagRepository: UserTagRepository,
     private val tagRepository: TagRepository,
-    private val followingUserService: FollowingUserService,
+    private val followingUserRepository: FollowingUserRepository,
     private val s3Controller: S3Controller
 ) {
 
@@ -63,6 +65,8 @@ class FeedService(
     fun update(id: Long, updateRequest: FeedDto.UpdateRequest, user: User): Feed {
         val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this ID does not exist.")
+
+        if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
 
         val userTagList = mutableListOf<UserTag>()
         for (nickname in updateRequest.userTags) {
@@ -99,9 +103,16 @@ class FeedService(
         return feed
     }
 
-    fun get(id: Long): Feed {
-        return feedRepository.findByIdOrNull(id)
+    fun get(id: Long, user: User): Feed {
+        val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        val currUser = userRepository.findByIdOrNull(user.id)
+
+        if (!feed.user.public) {
+            followingUserRepository.findByUser(currUser!!) ?: throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
+
+        return feed
     }
 
     fun getPage(offset: Int, number: Int, user: User): Page<Feed> {
@@ -120,10 +131,14 @@ class FeedService(
     fun delete(id: Long, user: User) {
         val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+
+        if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
+
 //        val photoKeys = feed.photoKeys.split(",")
 //        for (photoKey: String in photoKeys) {
 //            s3Controller.deletePhoto(photoKey)
 //        }
+
         feedRepository.delete(feed)
     }
 
@@ -131,6 +146,11 @@ class FeedService(
     fun addLike(id: Long, user: User): Feed {
         val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        val currUser = userRepository.findByIdOrNull(user.id)
+
+        if (!feed.user.public) {
+            followingUserRepository.findByUser(currUser!!) ?: throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
 
         val like = Like(feed, user)
         feed.likes.add(like)
@@ -142,6 +162,11 @@ class FeedService(
     fun deleteLike(id: Long, user: User): Feed {
         val feed = feedRepository.findByIdOrNull(id)
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
+        val currUser = userRepository.findByIdOrNull(user.id)
+
+        if (!feed.user.public) {
+            followingUserRepository.findByUser(currUser!!) ?: throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
 
         val likes = feed.likes
         val deletedLike = likes.find { it.user.id == user.id }

@@ -15,7 +15,7 @@ class FeedDto {
         val author: UserDto.Response,
         val content: String,
         val comments: List<CommentDto.Response>,
-        val likes: List<LikeDto.Response>,
+        val likes: List<UserDto.Response>,
         val likeSum: Int,
         val tags: List<TagDto.Response>,
         @JsonProperty("user_tags")
@@ -30,7 +30,7 @@ class FeedDto {
             author = UserDto.Response(feed.user),
             content = feed.content,
             comments = feed.comments.let { it.map { comment -> CommentDto.Response(comment) } },
-            likes = feed.likes.let { it.map { like -> LikeDto.Response(like) } },
+            likes = feed.likes.let { it.map { like -> UserDto.Response(like.user) } },
             likeSum = feed.likes.count(),
             tags = feed.tags.let { it.map { tag -> TagDto.Response(tag.content) } },
             userTags = feed.userTags.let { it.map { userTag -> UserTagDto.Response(userTag.user.nickname) } },
