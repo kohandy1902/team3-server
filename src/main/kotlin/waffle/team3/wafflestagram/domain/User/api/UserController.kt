@@ -275,6 +275,27 @@ class UserController(
         )
     }
 
+    @GetMapping("/follower_num/")
+    fun getFollowerNum(
+        @CurrentUser user: User,
+    ): ResponseEntity<Int> {
+        return ResponseEntity.ok().body(user.follower.size)
+    }
+
+    @GetMapping("/following_num/")
+    fun getFollowingNum(
+        @CurrentUser user: User,
+    ): ResponseEntity<Int> {
+        return ResponseEntity.ok().body(user.following.size)
+    }
+
+    @GetMapping("/feeds_num/")
+    fun getFeedsNum(
+        @CurrentUser user: User,
+    ): ResponseEntity<Int> {
+        return ResponseEntity.ok().body(user.feeds.size)
+    }
+
     fun <E> convertSetToPage(set: MutableSet<E>, pageable: Pageable): Page<E> {
         val list = set.toList()
         val start = pageable.offset.toInt()
