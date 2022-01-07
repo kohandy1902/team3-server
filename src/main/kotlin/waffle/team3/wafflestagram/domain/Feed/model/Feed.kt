@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.BatchSize
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Like.model.Like
+import waffle.team3.wafflestagram.domain.Photo.model.Photo
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
@@ -21,9 +22,11 @@ import javax.persistence.Table
 @Table(name = "feeds")
 class Feed(
     @Column
-    var photoKeys: String = "",
-    @Column
     var content: String = "",
+
+    @BatchSize(size = 100)
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "feed")
+    var photos: MutableList<Photo> = mutableListOf(),
 
     @BatchSize(size = 100)
     @Column(name = "likes")

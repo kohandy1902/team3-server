@@ -33,9 +33,9 @@ class CommentController(
         return ResponseEntity.ok().body(CommentDto.Response(newComment))
     }
 
-    @GetMapping("/{feed_id}/")
-    fun getComment(@PathVariable("feed_id") feedId: Long): ResponseEntity<CommentDto.Response> {
-        val comment = commentService.get(feedId)
+    @GetMapping("/{comment_id}/")
+    fun getComment(@PathVariable("comment_id") commentId: Long): ResponseEntity<CommentDto.Response> {
+        val comment = commentService.get(commentId)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }
 
@@ -49,17 +49,17 @@ class CommentController(
         return ResponseEntity.ok().body(commentList.map { CommentDto.Response(it) })
     }
 
-    @PutMapping("/{feed_id}/")
+    @PutMapping("/{comment_id}/")
     fun updateComment(
         @Valid @RequestBody updateRequest: CommentDto.UpdateRequest,
-        @PathVariable("feed_id") feedId: Long,
+        @PathVariable("comment_id") commentId: Long,
     ): ResponseEntity<CommentDto.Response> {
-        val comment = commentService.update(updateRequest, feedId)
+        val comment = commentService.update(updateRequest, commentId)
         return ResponseEntity.ok().body(CommentDto.Response(comment))
     }
 
-    @DeleteMapping("/{feed_id}/")
-    fun deleteComment(@PathVariable("feed_id") feedId: Long) {
-        commentService.delete(feedId)
+    @DeleteMapping("/{comment_id}/")
+    fun deleteComment(@PathVariable("comment_id") commentId: Long) {
+        commentService.delete(commentId)
     }
 }

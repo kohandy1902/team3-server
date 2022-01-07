@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import waffle.team3.wafflestagram.global.auth.dto.LoginRequest
+import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
 import java.io.BufferedReader
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -29,7 +30,7 @@ class SigninAuthenticationFilter(
     ) {
         response.addHeader("Authentication", jwtTokenProvider.generateToken(authResult))
         response.status = HttpServletResponse.SC_OK
-        response.writer.write("success")
+        response.writer.print((authResult.principal as UserPrincipal).user.id)
     }
 
     override fun unsuccessfulAuthentication(
