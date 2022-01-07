@@ -303,7 +303,7 @@ class UserController(
     fun getUserFollowerNum(
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<Int> {
-        val currUser = userService.getUserById(userId) ?: return ResponseEntity.badRequest().build()
+        val currUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("No user with this ID")
         return ResponseEntity.ok().body(currUser.follower.size)
     }
 
@@ -311,7 +311,7 @@ class UserController(
     fun getUserFollowingNum(
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<Int> {
-        val currUser = userService.getUserById(userId) ?: return ResponseEntity.badRequest().build()
+        val currUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("No user with this ID")
         return ResponseEntity.ok().body(currUser.following.size)
     }
 
@@ -319,7 +319,7 @@ class UserController(
     fun getUserFeedsNum(
         @PathVariable("user_id") userId: Long,
     ): ResponseEntity<Int> {
-        val currUser = userService.getUserById(userId) ?: return ResponseEntity.badRequest().build()
+        val currUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("No user with this ID")
         return ResponseEntity.ok().body(currUser.feeds.size)
     }
 
