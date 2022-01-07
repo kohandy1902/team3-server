@@ -211,7 +211,7 @@ class UserController(
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val otherUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
 
-        if(!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
         }
 
@@ -231,6 +231,28 @@ class UserController(
     ): ResponseEntity<Page<FollowerUserDto.Response>> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         val result = convertSetToPage(currUser.follower, PageRequest.of(offset, limit))
+        return ResponseEntity.ok().body(
+            result.map {
+                FollowerUserDto.Response(it)
+            }
+        )
+    }
+
+    @GetMapping("/follower/{user_id}/")
+    fun getFollowerListByUser(
+        @CurrentUser user: User,
+        @RequestParam(value = "offset", defaultValue = "0") offset: Int,
+        @RequestParam(value = "number", defaultValue = "30") limit: Int,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<Page<FollowerUserDto.Response>> {
+        val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
+        val otherUser = userService.getUserById(userId) ?: throw UserDoesNotExistException("user not exist")
+
+        if (!otherUser.public && !otherUser.follower.any { it.user.id == currUser.id }) {
+            throw FollowingUserDoesNotExistException("You are not follower of this user.")
+        }
+
+        val result = convertSetToPage(otherUser.follower, PageRequest.of(offset, limit))
         return ResponseEntity.ok().body(
             result.map {
                 FollowerUserDto.Response(it)
