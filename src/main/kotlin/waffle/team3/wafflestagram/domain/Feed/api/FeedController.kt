@@ -45,8 +45,10 @@ class FeedController(
     }
 
     @GetMapping("/{feed_id}/")
-    fun getFeedById(@PathVariable("feed_id") feedId: Long,
-    @CurrentUser user: User): ResponseEntity<FeedDto.Response> {
+    fun getFeedById(
+        @PathVariable("feed_id") feedId: Long,
+        @CurrentUser user: User
+    ): ResponseEntity<FeedDto.Response> {
         val feed = feedService.get(feedId, user)
         return ResponseEntity
             .status(200)

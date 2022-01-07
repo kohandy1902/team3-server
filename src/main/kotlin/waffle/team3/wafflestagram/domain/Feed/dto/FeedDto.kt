@@ -3,7 +3,6 @@ package waffle.team3.wafflestagram.domain.Feed.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
-import waffle.team3.wafflestagram.domain.Like.dto.LikeDto
 import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
