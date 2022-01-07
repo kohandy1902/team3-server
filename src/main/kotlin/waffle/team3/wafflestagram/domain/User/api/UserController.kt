@@ -134,7 +134,7 @@ class UserController(
     @PostMapping("/approve/{user_id}/")
     fun approveRequest(
         @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         for (waitingFollower in currUser.waitingFollower) {
@@ -153,7 +153,7 @@ class UserController(
     @PostMapping("/refuse/{user_id}/")
     fun refuseRequest(
         @CurrentUser user: User,
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: Long,
     ): ResponseEntity<UserDto.Response> {
         val currUser = userService.getUserById(user.id) ?: return ResponseEntity.badRequest().build()
         for (waitingFollower in currUser.waitingFollower) {
@@ -179,6 +179,15 @@ class UserController(
                 FollowingUserDto.Response(it)
             }
         )
+    }
+
+    @GetMapping("/following/{user_id}/")
+    fun getIsFollowing(
+        @CurrentUser user: User,
+        @PathVariable("user_id") userId: Long,
+    ): Boolean {
+        val currUser = userService.getUserById(user.id) ?: return false
+        return currUser.following.any { it.user.id == userId }
     }
 
     @GetMapping("/follower/")
