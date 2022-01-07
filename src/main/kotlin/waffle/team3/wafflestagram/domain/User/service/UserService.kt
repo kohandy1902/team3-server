@@ -12,6 +12,8 @@ import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 
 @Service
 class UserService(
+    private val followingUserService: FollowingUserService,
+    private val followerUserService: FollowerUserService,
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
@@ -40,6 +42,10 @@ class UserService(
     @Transactional
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
+
+        if(!currentUser.public && profileRequest.public == true)
+            flushWaitingFollower(currentUser)
+
         profileRequest.public?.let { currentUser.public = it }
         profileRequest.name?.let { currentUser.name = it }
         profileRequest.nickname?.let {
@@ -53,6 +59,18 @@ class UserService(
         profileRequest.birthday?.let { currentUser.birthday = it }
         profileRequest.phoneNumber?.let { currentUser.phoneNumber = it }
         userRepository.save(currentUser)
+    }
+
+    @Transactional
+    fun flushWaitingFollower(user: User) {
+        for(waiting in user.waitingFollower) {
+            followingUserService.addFollowing(waiting.user, user)
+            followerUserService.addFollower(user, waiting.user)
+            saveUser(user)
+            saveUser(waiting.user)
+        }
+        user.waitingFollower.clear()
+        saveUser(user)
     }
 
     @Transactional
