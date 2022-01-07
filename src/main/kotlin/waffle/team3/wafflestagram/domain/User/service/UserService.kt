@@ -56,10 +56,19 @@ class UserService(
     }
 
     @Transactional
-    fun getUser(currentUser: User, nickname: String): User {
+    fun getUserByNickname(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
         if (!user.public) {
-            user.follower.find { it.user.email == user.email } ?: throw UserException("not public")
+            user.follower.find { it.user.id == user.id } ?: throw UserException("not public")
+        }
+        return user
+    }
+
+    @Transactional
+    fun getUserById(currentUser: User, id: Long): User {
+        val user = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("invalid id")
+        if (!user.public) {
+            user.follower.find { it.user.id == user.id } ?: throw UserException("not public")
         }
         return user
     }

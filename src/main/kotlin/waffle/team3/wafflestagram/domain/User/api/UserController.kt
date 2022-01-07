@@ -59,11 +59,20 @@ class UserController(
     }
 
     @GetMapping("/profile/")
-    fun getProfile(
+    fun getProfileByNickname(
         @CurrentUser currentUser: User,
         @RequestParam("nickname") nickname: String
     ): ResponseEntity<UserDto.Response> {
-        val user = userService.getUser(currentUser, nickname)
+        val user = userService.getUserByNickname(currentUser, nickname)
+        return ResponseEntity.ok().body(UserDto.Response(user))
+    }
+
+    @GetMapping("/profile/{user_id}/")
+    fun getProfileById(
+        @CurrentUser currentUser: User,
+        @PathVariable("user_id") userId: Long,
+    ): ResponseEntity<UserDto.Response> {
+        val user = userService.getUserById(currentUser, userId)
         return ResponseEntity.ok().body(UserDto.Response(user))
     }
 
