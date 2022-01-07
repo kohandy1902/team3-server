@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import waffle.team3.wafflestagram.domain.Photo.model.Photo
 
 @Repository
-interface PhotoRepository: JpaRepository<Photo, Long>
+interface PhotoRepository : JpaRepository<Photo, Long>
