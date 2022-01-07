@@ -108,7 +108,7 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
         val currUser = userRepository.findByIdOrNull(user.id)
 
-        if (!feed.user.public && !feed.user.following.any { it.user.id == currUser!!.id })
+        if (!feed.user.public && !feed.user.follower.any { it.user.id == currUser!!.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
         return feed
@@ -147,7 +147,7 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
         val currUser = userRepository.findByIdOrNull(user.id)
 
-        if (!feed.user.public && !feed.user.following.any { it.user.id == currUser!!.id })
+        if (!feed.user.public && !feed.user.follower.any { it.user.id == currUser!!.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
         val like = Like(feed, user)
@@ -162,7 +162,7 @@ class FeedService(
             ?: throw FeedDoesNotExistException("Feed with this key does not exist.")
         val currUser = userRepository.findByIdOrNull(user.id)
 
-        if (!feed.user.public && !feed.user.following.any { it.user.id == currUser!!.id })
+        if (!feed.user.public && !feed.user.follower.any { it.user.id == currUser!!.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
         val likes = feed.likes
