@@ -73,7 +73,7 @@ class UserController(
         @RequestBody profilePhotoRequest: UserDto.ProfilePhotoRequest
     ): ResponseEntity<UserDto.ProfilePhotoResponse> {
         val profilePhotoURL = userService.setProfilePhoto(user, profilePhotoRequest)
-        return ResponseEntity.ok().body(UserDto.ProfilePhotoResponse(profilePhotoURL!!))
+        return ResponseEntity.ok().body(UserDto.ProfilePhotoResponse(profilePhotoURL))
     }
 
     @GetMapping("/profilePhoto/{user_id}/")

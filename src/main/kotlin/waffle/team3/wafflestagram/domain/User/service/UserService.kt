@@ -83,7 +83,7 @@ class UserService(
     lateinit var s3URL: String
 
     @Transactional
-    fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String? {
+    fun setProfilePhoto(user: User, profilePhotoRequest: UserDto.ProfilePhotoRequest): String {
         val currentUser = userRepository.findByIdOrNull(user.id) ?: throw UserDoesNotExistException("invalid user id")
         currentUser.profilePhotoKey?.let { s3controller.deletePhoto(it) }
         currentUser.profilePhotoKey = profilePhotoRequest.profilePhotoKey
