@@ -71,17 +71,17 @@ class UserController(
     fun setProfilePhoto(
         @CurrentUser user: User,
         @RequestBody profilePhotoRequest: UserDto.ProfilePhotoRequest
-    ): ResponseEntity<String> {
+    ): ResponseEntity<UserDto.ProfilePhotoResponse> {
         val profilePhotoURL = userService.setProfilePhoto(user, profilePhotoRequest)
-        return ResponseEntity.ok().body(profilePhotoURL)
+        return ResponseEntity.ok().body(UserDto.ProfilePhotoResponse(profilePhotoURL!!))
     }
 
     @GetMapping("/profilePhoto/{user_id}/")
     fun getProfilePhoto(
         @PathVariable("user_id") userId: Long
-    ): ResponseEntity<String> {
+    ): ResponseEntity<UserDto.ProfilePhotoResponse> {
         val profilePhotoURL = userService.getProfilePhoto(userId)
-        return ResponseEntity.ok().body(profilePhotoURL)
+        return ResponseEntity.ok().body(UserDto.ProfilePhotoResponse(profilePhotoURL))
     }
 
     @GetMapping("/me/")
