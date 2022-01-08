@@ -3,6 +3,7 @@ package waffle.team3.wafflestagram.domain.Reply.dto
 import waffle.team3.wafflestagram.domain.Reply.model.Reply
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.validation.constraints.NotBlank
 
 class ReplyDto {
@@ -15,8 +16,8 @@ class ReplyDto {
     ) {
         constructor(reply: Reply) : this(
             id = reply.id,
-            createdAt = reply.createdAt,
-            updatedAt = reply.updatedAt,
+            createdAt = reply.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
+            updatedAt = reply.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
             writer = UserDto.Response(reply.writer),
             text = reply.text,
         )

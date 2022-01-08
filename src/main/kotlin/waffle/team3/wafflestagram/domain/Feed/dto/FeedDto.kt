@@ -8,6 +8,7 @@ import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class FeedDto {
     data class Response(
@@ -36,8 +37,8 @@ class FeedDto {
             likeSum = feed.likes.count(),
             tags = feed.tags.let { it.map { tag -> TagDto.Response(tag.content) } },
             userTags = feed.userTags.let { it.map { userTag -> UserTagDto.Response(userTag.user.nickname) } },
-            createdAt = feed.createdAt,
-            updatedAt = feed.updatedAt
+            createdAt = feed.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
+            updatedAt = feed.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
         )
     }
 
