@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.domain.Reply.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import waffle.team3.wafflestagram.domain.Reply.model.Reply
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import java.time.LocalDateTime

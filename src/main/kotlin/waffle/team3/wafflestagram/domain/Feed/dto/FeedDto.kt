@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
