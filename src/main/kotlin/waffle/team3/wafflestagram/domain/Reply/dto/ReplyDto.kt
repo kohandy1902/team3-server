@@ -4,22 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import waffle.team3.wafflestagram.domain.Reply.model.Reply
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.validation.constraints.NotBlank
 
 class ReplyDto {
     data class Response(
         val id: Long,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val createdAt: LocalDateTime?,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val updatedAt: LocalDateTime? = null,
         val writer: UserDto.Response,
         val text: String,
     ) {
         constructor(reply: Reply) : this(
             id = reply.id,
-            createdAt = reply.createdAt,
-            updatedAt = reply.updatedAt,
+            createdAt = reply.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
+            updatedAt = reply.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
             writer = UserDto.Response(reply.writer),
             text = reply.text,
         )

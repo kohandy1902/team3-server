@@ -9,6 +9,7 @@ import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class FeedDto {
     data class Response(
@@ -23,10 +24,8 @@ class FeedDto {
         @JsonProperty("user_tags")
         val userTags: List<UserTagDto.Response>,
         @JsonProperty("created_at")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
         @JsonProperty("updated_at")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val updatedAt: LocalDateTime?
     ) {
         constructor(feed: Feed) : this(
@@ -39,8 +38,8 @@ class FeedDto {
             likeSum = feed.likes.count(),
             tags = feed.tags.let { it.map { tag -> TagDto.Response(tag.content) } },
             userTags = feed.userTags.let { it.map { userTag -> UserTagDto.Response(userTag.user.nickname) } },
-            createdAt = feed.createdAt,
-            updatedAt = feed.updatedAt
+            createdAt = feed.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
+            updatedAt = feed.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
         )
     }
 

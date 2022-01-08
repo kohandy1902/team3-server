@@ -1,18 +1,16 @@
 package waffle.team3.wafflestagram.domain.Comment.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import waffle.team3.wafflestagram.domain.Comment.model.Comment
 import waffle.team3.wafflestagram.domain.Reply.dto.ReplyDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.validation.constraints.NotBlank
 
 class CommentDto {
     data class Response(
         val id: Long,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val createdAt: LocalDateTime?,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val updatedAt: LocalDateTime? = null,
         val writer: UserDto.Response,
         val text: String,
@@ -20,8 +18,8 @@ class CommentDto {
     ) {
         constructor(comment: Comment) : this(
             id = comment.id,
-            createdAt = comment.createdAt,
-            updatedAt = comment.updatedAt,
+            createdAt = comment.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
+            updatedAt = comment.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
             writer = UserDto.Response(comment.writer),
             text = comment.text,
             reply = comment.replies.filterIndexed { index, i -> index < 3 }
