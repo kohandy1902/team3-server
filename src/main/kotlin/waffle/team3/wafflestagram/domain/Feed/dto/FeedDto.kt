@@ -1,5 +1,6 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
@@ -22,8 +23,10 @@ class FeedDto {
         @JsonProperty("user_tags")
         val userTags: List<UserTagDto.Response>,
         @JsonProperty("created_at")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
         @JsonProperty("updated_at")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         val updatedAt: LocalDateTime?
     ) {
         constructor(feed: Feed) : this(
