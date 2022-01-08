@@ -179,8 +179,10 @@ class FeedService(
         if (!feed.user.public && !feed.user.follower.any { it.user.id == currUser!!.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
-        val like = Like(feed, user)
-        feed.likes.add(like)
+        if (!feed.likes.any { it.user.id == user.id }) {
+            val like = Like(feed, user)
+            feed.likes.add(like)
+        }
 
         return feed
     }
