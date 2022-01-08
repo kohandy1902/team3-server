@@ -50,4 +50,7 @@ class UserDto {
     data class ProfilePhotoRequest(
         val profilePhotoKey: String? = null,
     )
+    data class ProfilePhotoResponse(
+        val profilePhotoURL: String,
+    )
 }
