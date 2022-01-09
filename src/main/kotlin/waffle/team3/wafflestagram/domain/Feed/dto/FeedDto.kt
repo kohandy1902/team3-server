@@ -22,9 +22,7 @@ class FeedDto {
         val tags: List<TagDto.Response>,
         @JsonProperty("user_tags")
         val userTags: List<UserTagDto.Response>,
-        @JsonProperty("created_at")
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
-        @JsonProperty("updated_at")
         val updatedAt: LocalDateTime?
     ) {
         constructor(feed: Feed) : this(
