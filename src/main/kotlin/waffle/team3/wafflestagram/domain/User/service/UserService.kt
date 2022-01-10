@@ -137,4 +137,9 @@ class UserService(
     fun searchUsersByNickname(nickname_prefix: String, pageable: Pageable): Page<User> {
         return userRepository.findByNicknameStartsWith(nickname_prefix, pageable)
     }
+
+    fun isAlreadyExists(email: String): Boolean {
+        if (userRepository.findByEmail(email) == null) return false
+        return true
+    }
 }
