@@ -20,7 +20,6 @@ class FeedDto {
         val likes: List<UserDto.Response>,
         val likeSum: Int,
         val tags: List<TagDto.Response>,
-        @JsonProperty("user_tags")
         val userTags: List<UserTagDto.Response>,
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
         val updatedAt: LocalDateTime?
@@ -44,7 +43,6 @@ class FeedDto {
         val content: String,
         val imageKeys: List<String>,
         val tags: List<String>,
-        @JsonProperty("user_tags")
         val userTags: List<String>
     )
 
@@ -52,7 +50,6 @@ class FeedDto {
         val content: String,
         val imageKeys: List<String>,
         val tags: List<String>,
-        @JsonProperty("user_tags")
         val userTags: List<String>
     )
 }
