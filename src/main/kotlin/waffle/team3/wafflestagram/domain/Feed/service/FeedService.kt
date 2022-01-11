@@ -11,6 +11,7 @@ import waffle.team3.wafflestagram.domain.Feed.exception.FeedNotAllowedException
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
 import waffle.team3.wafflestagram.domain.Like.model.Like
+import waffle.team3.wafflestagram.domain.Like.repository.LikeRepository
 import waffle.team3.wafflestagram.domain.Photo.model.Photo
 import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
@@ -18,7 +19,6 @@ import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExis
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
-import waffle.team3.wafflestagram.domain.User.repository.FollowingUserRepository
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
 import waffle.team3.wafflestagram.domain.UserTag.repository.UserTagRepository
@@ -32,7 +32,7 @@ class FeedService(
     private val userRepository: UserRepository,
     private val userTagRepository: UserTagRepository,
     private val tagRepository: TagRepository,
-    private val followingUserRepository: FollowingUserRepository,
+    private val likeRepository: LikeRepository,
     private val s3Controller: S3Controller,
 ) {
 
@@ -138,7 +138,13 @@ class FeedService(
             }
         }
         val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
-        return PageImpl(sortedFeeds, PageRequest.of(offset, number), sortedFeeds.size.toLong())
+
+        val pageable = PageRequest.of(offset, number)
+        val start = pageable.offset.toInt()
+        val end = (start + pageable.pageSize).coerceAtMost(sortedFeeds.size)
+        if (start > sortedFeeds.size) return PageImpl(listOf(), pageable, sortedFeeds.size.toLong())
+
+        return PageImpl(sortedFeeds.subList(start, end), pageable, sortedFeeds.size.toLong())
     }
 
     fun getSelfFeeds(offset: Int, number: Int, user: User): Page<Feed> {
@@ -179,8 +185,10 @@ class FeedService(
         if (!feed.user.public && !feed.user.follower.any { it.user.id == currUser!!.id })
             throw FollowingUserDoesNotExistException("You are not follower of this user.")
 
-        val like = Like(feed, user)
-        feed.likes.add(like)
+        if (!feed.likes.any { it.user.id == user.id }) {
+            val like = Like(feed, user)
+            feed.likes.add(like)
+        }
 
         return feed
     }
@@ -197,7 +205,9 @@ class FeedService(
         val likes = feed.likes
         val deletedLike = likes.find { it.user.id == user.id }
             ?: throw UserDoesNotExistException("You did not add like to this feed.")
+
         likes.remove(deletedLike)
+        likeRepository.delete(deletedLike)
 
         feed.likes = likes
 

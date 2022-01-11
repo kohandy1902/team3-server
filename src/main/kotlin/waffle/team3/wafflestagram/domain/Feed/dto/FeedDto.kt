@@ -1,6 +1,5 @@
 package waffle.team3.wafflestagram.domain.Feed.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import waffle.team3.wafflestagram.domain.Comment.dto.CommentDto
 import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Photo.dto.PhotoDto
@@ -20,7 +19,6 @@ class FeedDto {
         val likes: List<UserDto.Response>,
         val likeSum: Int,
         val tags: List<TagDto.Response>,
-        @JsonProperty("user_tags")
         val userTags: List<UserTagDto.Response>,
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
         val updatedAt: LocalDateTime?
@@ -44,7 +42,6 @@ class FeedDto {
         val content: String,
         val imageKeys: List<String>,
         val tags: List<String>,
-        @JsonProperty("user_tags")
         val userTags: List<String>
     )
 
@@ -52,7 +49,6 @@ class FeedDto {
         val content: String,
         val imageKeys: List<String>,
         val tags: List<String>,
-        @JsonProperty("user_tags")
         val userTags: List<String>
     )
 }
