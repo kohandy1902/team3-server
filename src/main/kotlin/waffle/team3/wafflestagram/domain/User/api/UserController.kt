@@ -48,9 +48,9 @@ class UserController(
         }
     }
 
-    @GetMapping("/search/{nickname_prefix}/")
+    @GetMapping("/search/")
     fun search(
-        @PathVariable("nickname_prefix") nickname_prefix: String,
+        @RequestParam("nickname_prefix") nickname_prefix: String,
         @RequestParam(value = "offset", defaultValue = "0") offset: Int,
         @RequestParam(value = "number", defaultValue = "30") limit: Int,
     ): ResponseEntity<Page<UserDto.Response>> {
