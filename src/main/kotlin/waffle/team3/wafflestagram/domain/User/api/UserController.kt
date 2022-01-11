@@ -19,7 +19,6 @@ import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.dto.WaitingFollowerUserDto
 import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
-import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.service.FollowerUserService
@@ -44,7 +43,7 @@ class UserController(
         return try {
             val user = userService.signup(signupRequest)
             ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
-        } catch (e: UserException) {
+        } catch (e: UserSignupException) {
             throw UserSignupException("email or nickname is duplicated")
         }
     }

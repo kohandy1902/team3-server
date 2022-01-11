@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserException
+import waffle.team3.wafflestagram.domain.User.exception.UserPrivateException
+import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.s3.controller.S3Controller
@@ -32,7 +34,7 @@ class UserService(
         signupRequest.nickname?.let {
             val nicknameUser = userRepository.findByNickname(it)
             if (nicknameUser != null)
-                throw UserException("this nickname already exists")
+                throw UserSignupException("this nickname already exists")
         }
         return userRepository.save(
             User(
@@ -69,7 +71,7 @@ class UserService(
         profileRequest.nickname?.let {
             val nicknameUser = userRepository.findByNickname(profileRequest.nickname)
             if (nicknameUser != null && nicknameUser.id != currentUser.id)
-                throw UserException("this nickname already exists")
+                throw UserSignupException("this nickname already exists")
             else currentUser.nickname = it
         }
         profileRequest.website?.let { currentUser.website = it }
@@ -112,7 +114,7 @@ class UserService(
     fun getUserByNickname(currentUser: User, nickname: String): User {
         val user = userRepository.findByNickname(nickname) ?: throw UserDoesNotExistException("invalid nickname")
         if (!user.public) {
-            user.follower.find { it.user.id == currentUser.id } ?: throw UserException("not public")
+            user.follower.find { it.user.id == currentUser.id } ?: throw UserPrivateException("not public")
         }
         return user
     }
@@ -121,7 +123,7 @@ class UserService(
     fun getUserById(currentUser: User, id: Long): User {
         val user = userRepository.findByIdOrNull(id) ?: throw UserDoesNotExistException("invalid id")
         if (!user.public) {
-            user.follower.find { it.user.id == currentUser.id } ?: throw UserException("not public")
+            user.follower.find { it.user.id == currentUser.id } ?: throw UserPrivateException("not public")
         }
         return user
     }
