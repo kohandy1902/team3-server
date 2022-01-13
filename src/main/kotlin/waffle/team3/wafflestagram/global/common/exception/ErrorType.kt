@@ -4,6 +4,7 @@ enum class ErrorType(
     val code: Int
 ) {
     INVALID_REQUEST(0),
+    FACEBOOK_TOKEN_INVALID(1),
 
     NOT_ALLOWED(3000),
     FEED_NOT_ALLOWED(3001),
