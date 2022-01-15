@@ -6,7 +6,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.getForEntity
-import org.springframework.web.client.postForEntity
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.global.oauth.OauthToken
 import waffle.team3.wafflestagram.global.oauth.SocialLoginType
@@ -78,15 +77,16 @@ class OauthService(
         val restTemplate = RestTemplateBuilder().build()
         val paraMap = mutableMapOf<String, String>()
         val accessToken = facebookOauth.requestAppAccessToken()
+        paraMap["input_token"] = token
+        paraMap["access_token"] = accessToken
 
-        val link = facebook_verify_token_url + "input_token=" + token + "&access_token=" + accessToken
-
-        val validateEntity = restTemplate.getForEntity(link, String::class.java)
+        val validateEntity = restTemplate.getForEntity<String>(facebook_verify_token_url, paraMap)
         val userId = findUserId(accessToken)
         if (validateEntity.statusCode != HttpStatus.OK) throw InvalidTokenException("Wrong validation")
         val hashmap = objectMapper.readValue(validateEntity.body, HashMap::class.java)
 
         if (!(hashmap["app_id"] == facebook_app_id && hashmap["user_id"] == userId)) throw InvalidTokenException("Wrong validation")
+
         return facebookOauth.findUser(accessToken)
     }
 }
