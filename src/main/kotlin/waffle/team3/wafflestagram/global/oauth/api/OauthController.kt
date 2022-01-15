@@ -34,7 +34,7 @@ class OauthController(
         return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
     }
 
-    @PostMapping("/facebook/")
+    @PostMapping("/facebook/verify/")
     fun verifyFacebook(
         @RequestHeader("idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {

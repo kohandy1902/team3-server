@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.client.getForEntity
+import org.springframework.web.client.postForEntity
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.oauth.OauthToken
@@ -36,9 +37,6 @@ class FacebookOauth(
 
     @Value("\${facebook.info.url}")
     private val facebook_userinfo_url: String? = null
-
-    @Value("\${facebook.callback.uri}")
-    private val facebook_callback_uri: String? = null
 
     @Override
     override fun getOauthRedirectURL(): String {
@@ -99,10 +97,10 @@ class FacebookOauth(
         val paraMap = mutableMapOf<String, String?>()
         paraMap.put("client_id", facebook_client_id)
         paraMap.put("client_secret", facebook_client_secret)
-        paraMap.put("redirect_uri", facebook_callback_url)
         paraMap.put("grant_type", "client_credentials")
+        paraMap.put("redirect_uri", facebook_callback_url)
 
-        val responseEntity = restTemplate.getForEntity<String>(facebook_base_token_auth_url!!, paraMap)
+        val responseEntity = restTemplate.postForEntity(facebook_base_token_auth_url!!, paraMap, String::class.java)
         if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
             return hashmap["access_token"].toString()
