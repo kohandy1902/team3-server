@@ -47,7 +47,6 @@ class FeedDto {
 
     data class UpdateRequest(
         val content: String,
-        val imageKeys: List<String>,
         val tags: List<String>,
         val userTags: List<String>
     )

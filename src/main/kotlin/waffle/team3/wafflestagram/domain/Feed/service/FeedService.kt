@@ -76,12 +76,6 @@ class FeedService(
 
         if (feed.user.id != user.id) throw FeedNotAllowedException("You are not allowed to update this feed.")
 
-        val photoList = mutableListOf<Photo>()
-        for (key in updateRequest.imageKeys) {
-            val photo = Photo(key, "https://waffle-team3-bucket.s3.ap-northeast-2.amazonaws.com/$key", feed)
-            photoList.add(photo)
-        }
-
         val userTagList = mutableListOf<UserTag>()
         for (nickname in updateRequest.userTags) {
             val findUser = userRepository.findByNickname(nickname)
@@ -110,7 +104,6 @@ class FeedService(
             tags = tagList
             userTags = userTagList
             updatedAt = LocalDateTime.now()
-            photos = photoList
         }
 
         feedRepository.save(feed)
