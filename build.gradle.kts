@@ -51,6 +51,7 @@ dependencies {
     // implementation("io.springfox:springfox-boot-starter:3.0.0")
     // implementation("org.springframework.boot:spring-boot-starter-parent:2.4.0-SNAPSHOT")
     // implementation("com.google.guava:guava:20.0")
+    implementation("com.google.api-client:google-api-client:1.31.2")
 }
 
 tasks.withType<KotlinCompile> {
