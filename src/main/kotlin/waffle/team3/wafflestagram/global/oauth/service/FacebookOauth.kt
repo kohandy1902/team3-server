@@ -89,4 +89,19 @@ class FacebookOauth(
             )
         } else throw AccessTokenException("Get user profile failed")
     }
+
+    fun requestAppAccessToken(): String {
+        val restTemplate = RestTemplateBuilder().build()
+        val paraMap = mutableMapOf<String, String?>()
+        paraMap.put("client_id", facebook_client_id)
+        paraMap.put("client_secret", facebook_client_secret)
+        paraMap.put("grant_type", "client_credentials")
+        paraMap.put("redirect_uri", facebook_callback_url)
+
+        val responseEntity = restTemplate.postForEntity(facebook_base_token_auth_url!!, paraMap, String::class.java)
+        if (responseEntity.statusCode == HttpStatus.OK) {
+            val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
+            return hashmap["access_token"].toString()
+        } else throw AccessTokenException("Wrong request")
+    }
 }

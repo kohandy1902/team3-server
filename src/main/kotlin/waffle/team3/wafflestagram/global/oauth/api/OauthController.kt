@@ -15,12 +15,14 @@ import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
+import waffle.team3.wafflestagram.global.oauth.service.OauthService
 import java.util.Collections
 
 @RestController
 @RequestMapping("/api/v1/social_login/")
 class OauthController(
     private val userService: UserService,
+    private val oauthService: OauthService,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
     @Value("\${google.client.id}")
@@ -51,5 +53,13 @@ class OauthController(
         } else {
             throw AccessTokenException("token is invalid")
         }
+    }
+
+    @PostMapping("/facebook/verify/")
+    fun verifyFacebook(
+        @RequestHeader("idToken") idToken: String
+    ): ResponseEntity<UserDto.Response> {
+        val user = oauthService.verifyAccessToken(idToken)
+        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
     }
 }
