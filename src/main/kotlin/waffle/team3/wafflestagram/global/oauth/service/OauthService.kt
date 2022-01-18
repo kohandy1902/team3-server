@@ -1,9 +1,6 @@
 package waffle.team3.wafflestagram.global.oauth.service
 
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
-import net.minidev.json.JSONObject
-import net.minidev.json.parser.JSONParser
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpMethod
@@ -23,7 +20,6 @@ import javax.servlet.http.HttpServletResponse
 
 @Service
 class OauthService(
-    private val googleOauth: GoogleOauth,
     private val facebookOauth: FacebookOauth,
     private val response: HttpServletResponse,
     private val objectMapper: ObjectMapper,
@@ -50,7 +46,6 @@ class OauthService(
     fun request(socialLoginType: SocialLoginType) {
         var redirectURL: String
         when (socialLoginType) {
-            SocialLoginType.google -> redirectURL = googleOauth.getOauthRedirectURL()
             SocialLoginType.facebook -> redirectURL = facebookOauth.getOauthRedirectURL()
             else -> throw InvalidArgException("Invalid Social Login format")
         }

@@ -1,37 +1,58 @@
 package waffle.team3.wafflestagram.global.oauth.api
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.exception.UserException
+import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
-import waffle.team3.wafflestagram.global.oauth.SocialLoginType
+import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
 import waffle.team3.wafflestagram.global.oauth.service.OauthService
+import java.util.Collections
 
 @RestController
 @RequestMapping("/api/v1/social_login/")
 class OauthController(
+    private val userService: UserService,
     private val oauthService: OauthService,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
-    @GetMapping("/{socialLoginType}/")
-    fun socialLogin(@PathVariable("socialLoginType") socialLoginType: SocialLoginType) {
-        oauthService.request(socialLoginType)
-    }
-    @GetMapping("/{socialLoginType}/callback/")
-    fun callback(
-        @PathVariable("socialLoginType") socialLoginType: SocialLoginType,
-        @RequestParam("accessToken") accessToken: String
-    ): ResponseEntity<UserDto.Response> {
-        // val accessToken = oauthService.requestAccessToken(socialLoginType, code)
-        val user = oauthService.findUser(socialLoginType, accessToken)
+    @Value("\${google.client.id}")
+    private val google_client_id: String? = null
 
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+    @PostMapping("/google/")
+    fun googleTokenVerifier(
+        @RequestHeader(value = "idToken") idToken: String
+    ): ResponseEntity<UserDto.Response> {
+        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
+            .setAudience(Collections.singletonList(google_client_id))
+            .build()
+
+        val result: GoogleIdToken?
+        try {
+            result = verifier.verify(idToken)
+        } catch (e: Exception) {
+            throw AccessTokenException("token is invalid")
+        }
+
+        if (result != null) {
+            val payload = result.payload
+            if (userService.isAlreadyExists(payload.email))
+                throw UserException("this email already exists")
+            return ResponseEntity.ok()
+                .header("Authentication", jwtTokenProvider.generateToken(payload.email))
+                .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+        } else {
+            throw AccessTokenException("token is invalid")
+        }
     }
 
     @PostMapping("/facebook/verify/")
