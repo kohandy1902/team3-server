@@ -32,7 +32,7 @@ class OauthController(
     fun googleTokenVerifier(
         @RequestHeader(value = "idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
-        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
+        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Collections.singletonList(google_client_id))
             .build()
 
