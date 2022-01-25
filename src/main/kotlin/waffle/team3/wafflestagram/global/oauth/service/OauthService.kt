@@ -73,7 +73,7 @@ class OauthService(
             builder.toUriString(),
             HttpMethod.GET
         )
-        if (response.statusCode == HttpStatus.OK) throw InvalidTokenException("Wrong validation")
+        if (response.statusCode != HttpStatus.OK) throw InvalidTokenException("Wrong validation")
         return objectMapper.readValue(response.body, HashMap::class.java)
     }
 
@@ -110,7 +110,7 @@ class OauthService(
 
         if (response.statusCode != HttpStatus.OK) throw InvalidTokenException("Wrong validation")
 
-        val userIdAndEmail = findUserIdAndEmail(accessToken)
+        val userIdAndEmail = findUserIdAndEmail(token)
             ?: throw UserDoesNotExistException("User with this email does not exist.")
         val email = userIdAndEmail["email"]
         return userRepository.findByEmail(email as String)
