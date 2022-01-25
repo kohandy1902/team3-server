@@ -8,9 +8,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
+import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
+import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.oauth.SocialLoginType
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
 import waffle.team3.wafflestagram.global.oauth.exception.InvalidArgException
@@ -23,7 +25,8 @@ class OauthService(
     private val facebookOauth: FacebookOauth,
     private val response: HttpServletResponse,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val userService: UserService
 ) {
     @Value("\${facebook.verify.token.url}")
     private lateinit var facebook_verify_token_url: String
@@ -63,11 +66,11 @@ class OauthService(
         }
     }
 
-    fun findUserIdAndEmail(accessToken: String): java.util.HashMap<*, *>? {
+    fun findUserNameAndEmail(idToken: String): java.util.HashMap<*, *>? {
         val restTemplate = RestTemplateBuilder().build()
         val builder = UriComponentsBuilder.fromHttpUrl(facebook_info_id_url)
-            .queryParam("fields", "id,email")
-            .queryParam("access_token", accessToken)
+            .queryParam("fields", "email,name")
+            .queryParam("access_token", idToken)
 
         val response = restTemplate.exchange<String>(
             builder.toUriString(),
@@ -110,10 +113,18 @@ class OauthService(
 
         if (response.statusCode != HttpStatus.OK) throw InvalidTokenException("Wrong validation")
 
-        val userIdAndEmail = findUserIdAndEmail(token)
+        val userNameAndEmail = findUserNameAndEmail(token)
             ?: throw UserDoesNotExistException("User with this email does not exist.")
-        val email = userIdAndEmail["email"]
+
+        val email = userNameAndEmail["email"]
+
         return userRepository.findByEmail(email as String)
-            ?: throw UserDoesNotExistException("User with this email does not exist.")
+            ?: userService.signup(
+                UserDto.SignupRequest(
+                    email = userNameAndEmail["email"] as String,
+                    name = userNameAndEmail["name"] as String,
+                    password = ""
+                )
+            )
     }
 }
