@@ -59,7 +59,11 @@ class OauthController(
     fun verifyFacebook(
         @RequestHeader("idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
-        val user = oauthService.verifyAccessToken(idToken)
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+        try {
+            val user = oauthService.verifyAccessToken(idToken)
+            return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+        } catch (e: Exception) {
+            throw AccessTokenException("token is invalid")
+        }
     }
 }
