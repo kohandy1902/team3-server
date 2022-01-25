@@ -130,6 +130,11 @@ class FeedService(
                 feeds.add(f)
             }
         }
+
+        for (f in user.feeds) {
+            feeds.add(f)
+        }
+
         val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
 
         val pageable = PageRequest.of(offset, number)
