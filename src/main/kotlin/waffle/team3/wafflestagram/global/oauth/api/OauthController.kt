@@ -7,10 +7,7 @@ import com.google.api.client.json.gson.GsonFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
@@ -65,7 +62,7 @@ class OauthController(
         try {
             val user = oauthService.verifyAccessToken(idToken)
             return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
-        } catch (e: Exception) {
+        } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")
         }
     }
