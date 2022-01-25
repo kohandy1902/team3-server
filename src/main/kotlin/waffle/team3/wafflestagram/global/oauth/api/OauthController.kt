@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
@@ -19,6 +20,7 @@ import java.util.Collections
 @RequestMapping("/api/v1/social_login/")
 class OauthController(
     private val userService: UserService,
+    private val userRepository: UserRepository,
     private val oauthService: OauthService,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
@@ -60,8 +62,30 @@ class OauthController(
         @RequestHeader("idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
         try {
-            val user = oauthService.verifyAccessToken(idToken)
-            return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+            val userNameAndEmail = oauthService.verifyAccessToken(idToken)
+            val id = userNameAndEmail["id"] as String
+            val name = userNameAndEmail["name"] as String
+
+            // 이메일이 없는 경우
+            if (userNameAndEmail["email"] == null) {
+                val user = userService.signup(UserDto.SignupRequest(email = id, name = name, password = ""))
+                return ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .body(UserDto.Response(user))
+            }
+
+            val email = userNameAndEmail["email"] as String
+            var user = userRepository.findByEmail(email)
+            return if (user != null) {
+                 ResponseEntity.status(HttpStatus.OK)
+                     .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                     .body(UserDto.Response(user))
+            } else {
+                user = userService.signup(UserDto.SignupRequest(email = email, name = name, password = ""))
+                ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .body(UserDto.Response(user))
+            }
         } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")
         }

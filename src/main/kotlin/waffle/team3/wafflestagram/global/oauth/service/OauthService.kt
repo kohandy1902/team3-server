@@ -69,7 +69,7 @@ class OauthService(
     fun findUserNameAndEmail(idToken: String): java.util.HashMap<*, *>? {
         val restTemplate = RestTemplateBuilder().build()
         val builder = UriComponentsBuilder.fromHttpUrl(facebook_info_id_url)
-            .queryParam("fields", "email,name")
+            .queryParam("fields", "id,email,name")
             .queryParam("access_token", idToken)
 
         val response = restTemplate.exchange<String>(
@@ -99,7 +99,7 @@ class OauthService(
         } else throw AccessTokenException("Wrong request")
     }
 
-    fun verifyAccessToken(token: String): User {
+    fun verifyAccessToken(token: String): java.util.HashMap<*, *> {
         val accessToken = requestAccessToken()
         val restTemplate = RestTemplateBuilder().build()
         val builder = UriComponentsBuilder.fromHttpUrl(facebook_verify_token_url)
@@ -113,18 +113,7 @@ class OauthService(
 
         if (response.statusCode != HttpStatus.OK) throw InvalidTokenException("Wrong validation")
 
-        val userNameAndEmail = findUserNameAndEmail(token)
-            ?: throw UserDoesNotExistException("User with this email does not exist.")
-
-        val email = userNameAndEmail["email"]
-
-        return userRepository.findByEmail(email as String)
-            ?: userService.signup(
-                UserDto.SignupRequest(
-                    email = userNameAndEmail["email"] as String,
-                    name = userNameAndEmail["name"] as String,
-                    password = ""
-                )
-            )
+        return findUserNameAndEmail(token)
+            ?: throw InvalidTokenException("Failed to get your information.")
     }
 }
