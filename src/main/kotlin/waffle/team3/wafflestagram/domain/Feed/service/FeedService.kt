@@ -131,7 +131,7 @@ class FeedService(
             }
         }
 
-        for (f in user.feeds) {
+        for (f in currUser.feeds) {
             feeds.add(f)
         }
 
