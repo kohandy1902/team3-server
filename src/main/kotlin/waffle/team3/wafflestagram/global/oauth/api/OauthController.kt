@@ -77,9 +77,9 @@ class OauthController(
             val email = userNameAndEmail["email"] as String
             var user = userRepository.findByEmail(email)
             return if (user != null) {
-                 ResponseEntity.status(HttpStatus.OK)
-                     .header("Authentication", jwtTokenProvider.generateToken(user.email))
-                     .body(UserDto.Response(user))
+                ResponseEntity.status(HttpStatus.OK)
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .body(UserDto.Response(user))
             } else {
                 user = userService.signup(UserDto.SignupRequest(email = email, name = name, password = ""))
                 ResponseEntity.status(HttpStatus.CREATED)

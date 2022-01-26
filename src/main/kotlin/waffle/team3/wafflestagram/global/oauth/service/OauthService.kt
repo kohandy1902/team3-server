@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.client.exchange
 import org.springframework.web.util.UriComponentsBuilder
-import waffle.team3.wafflestagram.domain.User.dto.UserDto
-import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.User.service.UserService
