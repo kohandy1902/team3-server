@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component
 import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
+import waffle.team3.wafflestagram.global.auth.model.UserFilter
 import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
 import java.util.Date
 
@@ -96,8 +97,3 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
         return tokenWithPrefix.replace(tokenPrefix, "").trim { it <= ' ' }
     }
 }
-
-class UserFilter(
-    val email: String,
-    val signupType: SignupType,
-)
