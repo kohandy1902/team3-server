@@ -30,7 +30,7 @@ class UserService(
 
     @Transactional
     fun signup(signupRequest: UserDto.SignupRequest): User {
-        if (isAlreadyExists(signupRequest.email, SignupType.APP))
+        if (findByEmailAndSignupType(signupRequest.email, SignupType.APP) != null)
             throw UserException("this email already exists")
         signupRequest.nickname?.let {
             val nicknameUser = userRepository.findByNickname(it)
