@@ -12,6 +12,7 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.exception.UserPrivateException
 import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.s3.controller.S3Controller
@@ -41,6 +42,7 @@ class UserService(
                 email = signupRequest.email,
                 password = passwordEncoder.encode(signupRequest.password),
                 public = signupRequest.public,
+                signupType = SignupType.APP,
                 name = signupRequest.name,
                 nickname = signupRequest.nickname,
                 birthday = signupRequest.birthday,
