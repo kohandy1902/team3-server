@@ -60,8 +60,28 @@ class OauthController(
         @RequestHeader("idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
         try {
-            val user = oauthService.verifyAccessToken(idToken)
-            return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+            val userNameAndEmail = oauthService.verifyAccessToken(idToken)
+            val id = userNameAndEmail["id"] as String
+            val name = userNameAndEmail["name"] as String
+
+            // 이메일이 없는 경우
+            if (userNameAndEmail["email"] == null) {
+                val user = userService.signup(UserDto.SignupRequest(email = id, name = name, password = ""))
+                return ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .body(UserDto.Response(user))
+            }
+
+            val email = userNameAndEmail["email"] as String
+            return if (userService.isAlreadyExists(email)) {
+                ResponseEntity.status(HttpStatus.OK)
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
+            } else {
+                ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
+            }
         } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")
         }
