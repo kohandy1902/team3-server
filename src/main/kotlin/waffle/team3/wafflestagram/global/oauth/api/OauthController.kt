@@ -83,7 +83,7 @@ class OauthController(
             } else {
                 ResponseEntity.status(HttpStatus.CREATED)
                     .header("Authentication", jwtTokenProvider.generateToken(email, SignupType.FACEBOOK))
-                    .body(UserDto.Response(userService.getUserByEmail(email)))
+                    .body(UserDto.Response(userService.saveUserAndReturn(email, SignupType.FACEBOOK)))
             }
         } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")
