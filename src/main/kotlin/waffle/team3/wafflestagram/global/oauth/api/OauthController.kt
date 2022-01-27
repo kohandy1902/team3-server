@@ -46,11 +46,11 @@ class OauthController(
             val user = userService.findByEmailAndSignupType(payload.email, SignupType.GOOGLE)
             if (user != null)
                 return ResponseEntity.ok()
-                    .header("Authentication", jwtTokenProvider.generateToken(payload.email))
+                    .header("Authentication", jwtTokenProvider.generateToken(payload.email, SignupType.GOOGLE))
                     .body(UserDto.Response(user))
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Authentication", jwtTokenProvider.generateToken(payload.email))
+                .header("Authentication", jwtTokenProvider.generateToken(payload.email, SignupType.GOOGLE))
                 .body(UserDto.Response(userService.saveUserAndReturn(payload.email, SignupType.GOOGLE)))
         } else {
             throw AccessTokenException("token is invalid")
@@ -75,10 +75,11 @@ class OauthController(
             }
 
             val email = userNameAndEmail["email"] as String
-            return if (userService.isAlreadyExists(email, SignupType.FACEBOOK)) {
+            val user = userService.findByEmailAndSignupType(email, SignupType.FACEBOOK)
+            return if (user != null) {
                 ResponseEntity.status(HttpStatus.OK)
                     .header("Authentication", jwtTokenProvider.generateToken(email))
-                    .body(UserDto.Response(userService.getUserByEmail(email)))
+                    .body(UserDto.Response(user))
             } else {
                 ResponseEntity.status(HttpStatus.CREATED)
                     .header("Authentication", jwtTokenProvider.generateToken(email))
