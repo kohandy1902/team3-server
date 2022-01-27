@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
-import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
@@ -20,7 +19,6 @@ import java.util.Collections
 @RequestMapping("/api/v1/social_login/")
 class OauthController(
     private val userService: UserService,
-    private val userRepository: UserRepository,
     private val oauthService: OauthService,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
@@ -75,16 +73,14 @@ class OauthController(
             }
 
             val email = userNameAndEmail["email"] as String
-            var user = userRepository.findByEmail(email)
-            return if (user != null) {
+            return if (userService.isAlreadyExists(email)) {
                 ResponseEntity.status(HttpStatus.OK)
-                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
-                    .body(UserDto.Response(user))
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
             } else {
-                user = userService.signup(UserDto.SignupRequest(email = email, name = name, password = ""))
                 ResponseEntity.status(HttpStatus.CREATED)
-                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
-                    .body(UserDto.Response(user))
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
             }
         } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")
