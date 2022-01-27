@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
-import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
 import waffle.team3.wafflestagram.global.auth.model.UserFilter
@@ -60,7 +59,10 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
         val userFilter = UserFilter.parseUserFilter(claims.get("filter", String::class.java))
             ?: throw UsernameNotFoundException("Parse Error")
         val currentUser = userRepository.findByEmailAndSignupType(userFilter.email, userFilter.signupType)
-            ?: throw UsernameNotFoundException("${userFilter.email} and ${userFilter.signupType} is not valid information, check token is expired")
+            ?: throw UsernameNotFoundException(
+                "${userFilter.email} and ${userFilter.signupType} " +
+                    "is not valid information, check token is expired"
+            )
         val userPrincipal = UserPrincipal(currentUser)
         val authorises = userPrincipal.authorities
         // Make token with parsed data
