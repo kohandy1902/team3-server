@@ -142,8 +142,11 @@ class UserService(
         return userRepository.findByNicknameStartsWith(nickname_prefix, pageable)
     }
 
-    fun isAlreadyExists(email: String): Boolean {
-        if (userRepository.findByEmail(email) == null) return false
-        return true
+    fun isAlreadyExists(email: String, signupType: SignupType): Boolean {
+        val userList = userRepository.findByEmail(email)
+        for (user in userList) {
+            if(user.signupType == signupType) return true
+        }
+        return false
     }
 }
