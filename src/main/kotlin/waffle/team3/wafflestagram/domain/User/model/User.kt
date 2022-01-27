@@ -34,7 +34,3 @@ class User(
     var profilePhotoKey: String? = null,
     var profilePhotoURL: String,
 ) : BaseTimeEntity()
-
-enum class SignupType {
-    APP, GOOGLE, FACEBOOK
-}
