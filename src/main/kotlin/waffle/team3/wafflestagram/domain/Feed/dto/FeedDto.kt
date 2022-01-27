@@ -5,7 +5,6 @@ import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Photo.dto.PhotoDto
 import waffle.team3.wafflestagram.domain.Tag.dto.TagDto
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
-import waffle.team3.wafflestagram.domain.UserTag.dto.UserTagDto
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -19,7 +18,7 @@ class FeedDto {
         val likes: List<UserDto.Response>,
         val likeSum: Int,
         val tags: List<TagDto.Response>,
-        val userTags: List<UserTagDto.Response>,
+        val userTags: List<UserDto.Response>,
         val createdAt: LocalDateTime?, //  null 이 아니어도 되지 않을까?
         val updatedAt: LocalDateTime?
     ) {
@@ -32,7 +31,7 @@ class FeedDto {
             likes = feed.likes.let { it.map { like -> UserDto.Response(like.user) } },
             likeSum = feed.likes.count(),
             tags = feed.tags.let { it.map { tag -> TagDto.Response(tag.content) } },
-            userTags = feed.userTags.let { it.map { userTag -> UserTagDto.Response(userTag.user.nickname) } },
+            userTags = feed.userTags.let { it.map { userTag -> UserDto.Response(userTag.user) } },
             createdAt = feed.createdAt!!.truncatedTo(ChronoUnit.SECONDS),
             updatedAt = feed.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
         )
