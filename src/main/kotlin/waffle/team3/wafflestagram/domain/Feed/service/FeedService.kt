@@ -130,9 +130,32 @@ class FeedService(
                 feeds.add(f)
             }
         }
+
+        for (f in currUser.feeds) {
+            feeds.add(f)
+        }
+
         val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
 
         val pageable = PageRequest.of(offset, number)
+        val start = pageable.offset.toInt()
+        val end = (start + pageable.pageSize).coerceAtMost(sortedFeeds.size)
+        if (start > sortedFeeds.size) return PageImpl(listOf(), pageable, sortedFeeds.size.toLong())
+
+        return PageImpl(sortedFeeds.subList(start, end), pageable, sortedFeeds.size.toLong())
+    }
+
+    fun getTagFeeds(offset: Int, limit: Int, userId: Long): Page<Feed> {
+        val currUser = userRepository.findByIdOrNull(userId) ?: throw UserDoesNotExistException("User with this ID does not exist.")
+        val userTags = userTagRepository.findByUserEquals(currUser)
+        val feeds = mutableListOf<Feed>()
+        for (userTag in userTags) {
+            feeds.add(userTag.feed)
+        }
+
+        val sortedFeeds = feeds.sortedBy { it.updatedAt }.reversed()
+
+        val pageable = PageRequest.of(offset, limit)
         val start = pageable.offset.toInt()
         val end = (start + pageable.pageSize).coerceAtMost(sortedFeeds.size)
         if (start > sortedFeeds.size) return PageImpl(listOf(), pageable, sortedFeeds.size.toLong())

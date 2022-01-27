@@ -5,13 +5,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
-import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
@@ -32,7 +29,7 @@ class OauthController(
     fun googleTokenVerifier(
         @RequestHeader(value = "idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
-        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
+        val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory.getDefaultInstance())
             .setAudience(Collections.singletonList(google_client_id))
             .build()
 
@@ -46,8 +43,11 @@ class OauthController(
         if (result != null) {
             val payload = result.payload
             if (userService.isAlreadyExists(payload.email))
-                throw UserException("this email already exists")
-            return ResponseEntity.ok()
+                return ResponseEntity.ok()
+                    .header("Authentication", jwtTokenProvider.generateToken(payload.email))
+                    .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+
+            return ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authentication", jwtTokenProvider.generateToken(payload.email))
                 .body(UserDto.Response(userService.getUserByEmail(payload.email)))
         } else {
@@ -59,7 +59,31 @@ class OauthController(
     fun verifyFacebook(
         @RequestHeader("idToken") idToken: String
     ): ResponseEntity<UserDto.Response> {
-        val user = oauthService.verifyAccessToken(idToken)
-        return ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email)).body(UserDto.Response(user))
+        try {
+            val userNameAndEmail = oauthService.verifyAccessToken(idToken)
+            val id = userNameAndEmail["id"] as String
+            val name = userNameAndEmail["name"] as String
+
+            // 이메일이 없는 경우
+            if (userNameAndEmail["email"] == null) {
+                val user = userService.signup(UserDto.SignupRequest(email = id, name = name, password = ""))
+                return ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .body(UserDto.Response(user))
+            }
+
+            val email = userNameAndEmail["email"] as String
+            return if (userService.isAlreadyExists(email)) {
+                ResponseEntity.status(HttpStatus.OK)
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
+            } else {
+                ResponseEntity.status(HttpStatus.CREATED)
+                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .body(UserDto.Response(userService.getUserByEmail(email)))
+            }
+        } catch (e: AccessTokenException) {
+            throw AccessTokenException("token is invalid")
+        }
     }
 }
