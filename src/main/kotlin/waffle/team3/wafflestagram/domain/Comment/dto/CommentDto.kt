@@ -22,8 +22,7 @@ class CommentDto {
             updatedAt = comment.updatedAt!!.truncatedTo(ChronoUnit.SECONDS),
             writer = UserDto.Response(comment.writer),
             text = comment.text,
-            reply = comment.replies.filterIndexed { index, i -> index < 3 }
-                .let { it.map { reply -> ReplyDto.Response(reply) } }
+            reply = comment.replies.map { ReplyDto.Response(it) }
         )
     }
     data class CreateRequest(
