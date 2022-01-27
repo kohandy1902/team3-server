@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
@@ -42,7 +43,7 @@ class OauthController(
 
         if (result != null) {
             val payload = result.payload
-            if (userService.isAlreadyExists(payload.email))
+            if (userService.isAlreadyExists(payload.email, SignupType.GOOGLE))
                 return ResponseEntity.ok()
                     .header("Authentication", jwtTokenProvider.generateToken(payload.email))
                     .body(UserDto.Response(userService.getUserByEmail(payload.email)))
