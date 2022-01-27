@@ -43,14 +43,15 @@ class OauthController(
 
         if (result != null) {
             val payload = result.payload
-            if (userService.isAlreadyExists(payload.email, SignupType.GOOGLE))
+            val user = userService.findByEmailAndSignupType(payload.email, SignupType.GOOGLE)
+            if (user != null)
                 return ResponseEntity.ok()
                     .header("Authentication", jwtTokenProvider.generateToken(payload.email))
-                    .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+                    .body(UserDto.Response(user))
 
             return ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authentication", jwtTokenProvider.generateToken(payload.email))
-                .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+                .body(UserDto.Response(userService.saveUserAndReturn(payload.email, SignupType.GOOGLE)))
         } else {
             throw AccessTokenException("token is invalid")
         }

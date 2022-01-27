@@ -61,6 +61,16 @@ class UserService(
         )
     }
 
+    fun saveUserAndReturn(email: String, signupType: SignupType): User {
+        return userRepository.save(
+            User(
+                email = email,
+                signupType = signupType,
+                profilePhotoURL = default_s3URL,
+            )
+        )
+    }
+
     @Transactional
     fun setProfile(user: User, profileRequest: UserDto.ProfileRequest) {
         val currentUser = userRepository.findByIdOrNull(user.id)!!
