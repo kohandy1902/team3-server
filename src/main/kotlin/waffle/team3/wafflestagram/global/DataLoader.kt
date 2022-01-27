@@ -27,8 +27,19 @@ class DataLoader(
     @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
     override fun run(args: ApplicationArguments) {
-        val newUser0 = User(email = "2harry@snu.ac.kr", password = "1234", profilePhotoURL = default_s3URL, signupType = SignupType.APP)
-        val newUser1 = User(email = "970707zzang@naver.com", password = "1234", profilePhotoURL = default_s3URL, signupType = SignupType.APP)
+        val newUser0 = User(
+            email = "2harry@snu.ac.kr",
+            password = "1234",
+            profilePhotoURL = default_s3URL,
+            signupType = SignupType.APP
+        )
+
+        val newUser1 = User(
+            email = "970707zzang@naver.com",
+            password = "1234",
+            profilePhotoURL = default_s3URL,
+            signupType = SignupType.APP
+        )
         userRepository.save(newUser0)
         userRepository.save(newUser1)
         val newFeed = feedRepository.save(

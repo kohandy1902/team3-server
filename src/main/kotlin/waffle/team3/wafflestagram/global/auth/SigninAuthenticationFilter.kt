@@ -47,7 +47,10 @@ class SigninAuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         // Parse auth request
         val parsedRequest: LoginRequest = parseRequest(request)
-        val authRequest: Authentication = UsernamePasswordAuthenticationToken(UserFilter(parsedRequest.email, SignupType.APP).toString(), parsedRequest.password)
+        val authRequest: Authentication = UsernamePasswordAuthenticationToken(
+            UserFilter(parsedRequest.email, SignupType.APP).toString(),
+            parsedRequest.password
+        )
         return authenticationManager.authenticate(authRequest)
     }
 

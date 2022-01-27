@@ -42,7 +42,9 @@ class UserController(
     fun signup(@Valid @RequestBody signupRequest: UserDto.SignupRequest): ResponseEntity<UserDto.Response> {
         return try {
             val user = userService.signup(signupRequest)
-            ResponseEntity.ok().header("Authentication", jwtTokenProvider.generateToken(user.email, user.signupType)).body(UserDto.Response(user))
+            ResponseEntity.ok()
+                .header("Authentication", jwtTokenProvider.generateToken(user.email, user.signupType))
+                .body(UserDto.Response(user))
         } catch (e: UserSignupException) {
             throw UserSignupException("email or nickname is duplicated")
         }
