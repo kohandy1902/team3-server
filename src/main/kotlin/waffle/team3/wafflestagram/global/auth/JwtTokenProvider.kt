@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
 import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
@@ -56,7 +57,7 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
 
         // Recover User class from JWT
         val email = claims.get("email", String::class.java)
-        val currentUser = userRepository.findByEmail(email)
+        val currentUser = userRepository.findByEmailAndSignupType(email, SignupType.APP)
             ?: throw UsernameNotFoundException("$email is not valid email, check token is expired")
         val userPrincipal = UserPrincipal(currentUser)
         val authorises = userPrincipal.authorities
