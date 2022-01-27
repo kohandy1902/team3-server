@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
 import waffle.team3.wafflestagram.global.auth.model.UserFilter
@@ -32,11 +33,12 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
     // Generate jwt token with prefix
     fun generateToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserPrincipal
-        return generateToken(UserFilter(userPrincipal.user.email, userPrincipal.user.signupType).toString())
+        return generateToken(userPrincipal.user.email, userPrincipal.user.signupType)
     }
 
-    fun generateToken(s: String): String {
-        val claims: MutableMap<String, Any> = hashMapOf("filter" to s)
+    fun generateToken(email: String, signupType: SignupType): String {
+        val parsedRequest = UserFilter(email, signupType).toString()
+        val claims: MutableMap<String, Any> = hashMapOf("filter" to parsedRequest)
         val now = Date()
         val expiryDate = Date(now.time + jwtExpirationInMs!!)
         return tokenPrefix + Jwts.builder()
