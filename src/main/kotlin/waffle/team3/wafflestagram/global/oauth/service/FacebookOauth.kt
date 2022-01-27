@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.oauth.OauthToken
@@ -84,8 +85,8 @@ class FacebookOauth(
         println(responseEntity.body)
         if (responseEntity.statusCode == HttpStatus.OK) {
             val hashmap = objectMapper.readValue(responseEntity.body, HashMap::class.java)
-            return userRepository.findByEmail(hashmap["email"].toString()) ?: userRepository.save(
-                User(email = hashmap["email"].toString(), profilePhotoURL = default_s3URL)
+            return userRepository.findByEmailAndSignupType(hashmap["email"].toString(), hashmap["signupType"] as SignupType) ?: userRepository.save(
+                User(email = hashmap["email"].toString(), profilePhotoURL = default_s3URL, signupType = SignupType.FACEBOOK)
             )
         } else throw AccessTokenException("Get user profile failed")
     }
