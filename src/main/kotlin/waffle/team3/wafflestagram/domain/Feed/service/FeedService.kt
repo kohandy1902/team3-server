@@ -17,7 +17,6 @@ import waffle.team3.wafflestagram.domain.Tag.model.Tag
 import waffle.team3.wafflestagram.domain.Tag.repository.TagRepository
 import waffle.team3.wafflestagram.domain.User.exception.FollowingUserDoesNotExistException
 import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistException
-import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.domain.UserTag.model.UserTag
@@ -51,7 +50,6 @@ class FeedService(
         for (nickname in uploadRequest.userTags) {
             val findUser = userRepository.findByNickname(nickname)
                 ?: throw UserDoesNotExistException("User with this nickname does not exist.")
-            if (findUser.id == user.id) throw UserException("You cannot tag yourself.")
             val userTag = UserTag(user = findUser, feed = feed)
             userTagList.add(userTag)
         }
@@ -80,7 +78,6 @@ class FeedService(
         for (nickname in updateRequest.userTags) {
             val findUser = userRepository.findByNickname(nickname)
                 ?: throw UserDoesNotExistException("User with this nickname does not exist.")
-            if (findUser.id == user.id) throw UserException("You cannot tag yourself.")
             val userTag = UserTag(user = findUser, feed = feed)
             userTagList.add(userTag)
         }
