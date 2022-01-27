@@ -52,15 +52,6 @@ class UserService(
         )
     }
 
-    fun getUserByEmail(email: String): User {
-        return userRepository.findByEmail(email) ?: userRepository.save(
-            User(
-                email = email,
-                profilePhotoURL = default_s3URL,
-            )
-        )
-    }
-
     fun saveUserAndReturn(email: String, signupType: SignupType): User {
         return userRepository.save(
             User(
