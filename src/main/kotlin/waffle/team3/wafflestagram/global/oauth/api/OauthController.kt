@@ -70,7 +70,7 @@ class OauthController(
             if (userNameAndEmail["email"] == null) {
                 val user = userService.signup(UserDto.SignupRequest(email = id, name = name, password = ""))
                 return ResponseEntity.status(HttpStatus.CREATED)
-                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email, SignupType.FACEBOOK))
                     .body(UserDto.Response(user))
             }
 
@@ -78,11 +78,11 @@ class OauthController(
             val user = userService.findByEmailAndSignupType(email, SignupType.FACEBOOK)
             return if (user != null) {
                 ResponseEntity.status(HttpStatus.OK)
-                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .header("Authentication", jwtTokenProvider.generateToken(email, SignupType.FACEBOOK))
                     .body(UserDto.Response(user))
             } else {
                 ResponseEntity.status(HttpStatus.CREATED)
-                    .header("Authentication", jwtTokenProvider.generateToken(email))
+                    .header("Authentication", jwtTokenProvider.generateToken(email, SignupType.FACEBOOK))
                     .body(UserDto.Response(userService.getUserByEmail(email)))
             }
         } catch (e: AccessTokenException) {
