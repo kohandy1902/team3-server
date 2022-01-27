@@ -74,7 +74,7 @@ class OauthController(
             }
 
             val email = userNameAndEmail["email"] as String
-            return if (userService.isAlreadyExists(email)) {
+            return if (userService.isAlreadyExists(email, SignupType.FACEBOOK)) {
                 ResponseEntity.status(HttpStatus.OK)
                     .header("Authentication", jwtTokenProvider.generateToken(email))
                     .body(UserDto.Response(userService.getUserByEmail(email)))
