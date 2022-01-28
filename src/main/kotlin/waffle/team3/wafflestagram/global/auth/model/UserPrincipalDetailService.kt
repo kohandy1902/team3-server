@@ -9,7 +9,9 @@ import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 @Service
 class UserPrincipalDetailService(private val userRepository: UserRepository) : UserDetailsService {
     override fun loadUserByUsername(s: String): UserDetails {
-        val user = userRepository.findByEmail(s) ?: throw UsernameNotFoundException("User with email '%s' not found")
+        val userFilter = UserFilter.parseUserFilter(s) ?: throw UsernameNotFoundException("Parse Error")
+        val user = userRepository.findByEmailAndSignupType(userFilter.email, userFilter.signupType)
+            ?: throw UsernameNotFoundException("User with ${userFilter.email} and ${userFilter.signupType} not found")
         return UserPrincipal(user)
     }
 }

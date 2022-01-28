@@ -6,7 +6,7 @@ import waffle.team3.wafflestagram.domain.User.model.User
 
 class UserPrincipal(val user: User) : UserDetails {
     override fun getUsername(): String {
-        return user.email
+        return user.email + " " + user.signupType.ordinal
     }
 
     override fun getPassword(): String? {

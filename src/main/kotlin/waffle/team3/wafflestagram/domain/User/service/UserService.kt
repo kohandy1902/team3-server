@@ -12,6 +12,7 @@ import waffle.team3.wafflestagram.domain.User.exception.UserDoesNotExistExceptio
 import waffle.team3.wafflestagram.domain.User.exception.UserException
 import waffle.team3.wafflestagram.domain.User.exception.UserPrivateException
 import waffle.team3.wafflestagram.domain.User.exception.UserSignupException
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.s3.controller.S3Controller
@@ -29,7 +30,7 @@ class UserService(
 
     @Transactional
     fun signup(signupRequest: UserDto.SignupRequest): User {
-        if (userRepository.findByEmail(signupRequest.email) != null)
+        if (findByEmailAndSignupType(signupRequest.email, SignupType.APP) != null)
             throw UserException("this email already exists")
         signupRequest.nickname?.let {
             val nicknameUser = userRepository.findByNickname(it)
@@ -41,6 +42,7 @@ class UserService(
                 email = signupRequest.email,
                 password = passwordEncoder.encode(signupRequest.password),
                 public = signupRequest.public,
+                signupType = SignupType.APP,
                 name = signupRequest.name,
                 nickname = signupRequest.nickname,
                 birthday = signupRequest.birthday,
@@ -50,10 +52,11 @@ class UserService(
         )
     }
 
-    fun getUserByEmail(email: String): User {
-        return userRepository.findByEmail(email) ?: userRepository.save(
+    fun saveUserAndReturn(email: String, signupType: SignupType): User {
+        return userRepository.save(
             User(
                 email = email,
+                signupType = signupType,
                 profilePhotoURL = default_s3URL,
             )
         )
@@ -140,8 +143,7 @@ class UserService(
         return userRepository.findByNicknameStartsWith(nickname_prefix, pageable)
     }
 
-    fun isAlreadyExists(email: String): Boolean {
-        if (userRepository.findByEmail(email) == null) return false
-        return true
+    fun findByEmailAndSignupType(email: String, signupType: SignupType): User? {
+        return userRepository.findByEmailAndSignupType(email, signupType)
     }
 }

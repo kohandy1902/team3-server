@@ -11,6 +11,7 @@ import waffle.team3.wafflestagram.domain.Feed.model.Feed
 import waffle.team3.wafflestagram.domain.Feed.repository.FeedRepository
 import waffle.team3.wafflestagram.domain.Reply.model.Reply
 import waffle.team3.wafflestagram.domain.Reply.repository.ReplyRepository
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.model.User
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 
@@ -26,8 +27,19 @@ class DataLoader(
     @Value("\${cloud.aws.s3.photoURL_default}")
     lateinit var default_s3URL: String
     override fun run(args: ApplicationArguments) {
-        val newUser0 = User(email = "2harry@snu.ac.kr", password = "1234", profilePhotoURL = default_s3URL)
-        val newUser1 = User(email = "970707zzang@naver.com", password = "1234", profilePhotoURL = default_s3URL)
+        val newUser0 = User(
+            email = "2harry@snu.ac.kr",
+            password = "1234",
+            profilePhotoURL = default_s3URL,
+            signupType = SignupType.APP
+        )
+
+        val newUser1 = User(
+            email = "970707zzang@naver.com",
+            password = "1234",
+            profilePhotoURL = default_s3URL,
+            signupType = SignupType.APP
+        )
         userRepository.save(newUser0)
         userRepository.save(newUser1)
         val newFeed = feedRepository.save(

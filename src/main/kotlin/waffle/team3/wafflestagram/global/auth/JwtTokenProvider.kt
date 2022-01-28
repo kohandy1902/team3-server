@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.repository.UserRepository
 import waffle.team3.wafflestagram.global.auth.model.CustomAuthenticationToken
+import waffle.team3.wafflestagram.global.auth.model.UserFilter
 import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
 import java.util.Date
 
@@ -31,11 +33,12 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
     // Generate jwt token with prefix
     fun generateToken(authentication: Authentication): String {
         val userPrincipal = authentication.principal as UserPrincipal
-        return generateToken(userPrincipal.user.email)
+        return generateToken(userPrincipal.user.email, userPrincipal.user.signupType)
     }
 
-    fun generateToken(email: String): String {
-        val claims: MutableMap<String, Any> = hashMapOf("email" to email)
+    fun generateToken(email: String, signupType: SignupType): String {
+        val parsedRequest = UserFilter(email, signupType).toString()
+        val claims: MutableMap<String, Any> = hashMapOf("filter" to parsedRequest)
         val now = Date()
         val expiryDate = Date(now.time + jwtExpirationInMs!!)
         return tokenPrefix + Jwts.builder()
@@ -55,9 +58,13 @@ class JwtTokenProvider(private val userRepository: UserRepository) {
             .body
 
         // Recover User class from JWT
-        val email = claims.get("email", String::class.java)
-        val currentUser = userRepository.findByEmail(email)
-            ?: throw UsernameNotFoundException("$email is not valid email, check token is expired")
+        val userFilter = UserFilter.parseUserFilter(claims.get("filter", String::class.java))
+            ?: throw UsernameNotFoundException("Parse Error")
+        val currentUser = userRepository.findByEmailAndSignupType(userFilter.email, userFilter.signupType)
+            ?: throw UsernameNotFoundException(
+                "${userFilter.email} and ${userFilter.signupType} " +
+                    "is not valid information, check token is expired"
+            )
         val userPrincipal = UserPrincipal(currentUser)
         val authorises = userPrincipal.authorities
         // Make token with parsed data

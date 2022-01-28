@@ -7,7 +7,9 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.global.auth.dto.LoginRequest
+import waffle.team3.wafflestagram.global.auth.model.UserFilter
 import waffle.team3.wafflestagram.global.auth.model.UserPrincipal
 import java.io.BufferedReader
 import javax.servlet.FilterChain
@@ -45,7 +47,10 @@ class SigninAuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         // Parse auth request
         val parsedRequest: LoginRequest = parseRequest(request)
-        val authRequest: Authentication = UsernamePasswordAuthenticationToken(parsedRequest.email, parsedRequest.password)
+        val authRequest: Authentication = UsernamePasswordAuthenticationToken(
+            UserFilter(parsedRequest.email, SignupType.APP).toString(),
+            parsedRequest.password
+        )
         return authenticationManager.authenticate(authRequest)
     }
 

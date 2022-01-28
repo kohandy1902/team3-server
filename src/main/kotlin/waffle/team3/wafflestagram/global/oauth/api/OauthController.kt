@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import waffle.team3.wafflestagram.domain.User.dto.UserDto
+import waffle.team3.wafflestagram.domain.User.model.SignupType
 import waffle.team3.wafflestagram.domain.User.service.UserService
 import waffle.team3.wafflestagram.global.auth.JwtTokenProvider
 import waffle.team3.wafflestagram.global.oauth.exception.AccessTokenException
@@ -42,14 +43,15 @@ class OauthController(
 
         if (result != null) {
             val payload = result.payload
-            if (userService.isAlreadyExists(payload.email))
+            val user = userService.findByEmailAndSignupType(payload.email, SignupType.GOOGLE)
+            if (user != null)
                 return ResponseEntity.ok()
-                    .header("Authentication", jwtTokenProvider.generateToken(payload.email))
-                    .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+                    .header("Authentication", jwtTokenProvider.generateToken(payload.email, SignupType.GOOGLE))
+                    .body(UserDto.Response(user))
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Authentication", jwtTokenProvider.generateToken(payload.email))
-                .body(UserDto.Response(userService.getUserByEmail(payload.email)))
+                .header("Authentication", jwtTokenProvider.generateToken(payload.email, SignupType.GOOGLE))
+                .body(UserDto.Response(userService.saveUserAndReturn(payload.email, SignupType.GOOGLE)))
         } else {
             throw AccessTokenException("token is invalid")
         }
@@ -68,19 +70,20 @@ class OauthController(
             if (userNameAndEmail["email"] == null) {
                 val user = userService.signup(UserDto.SignupRequest(email = id, name = name, password = ""))
                 return ResponseEntity.status(HttpStatus.CREATED)
-                    .header("Authentication", jwtTokenProvider.generateToken(user.email))
+                    .header("Authentication", jwtTokenProvider.generateToken(user.email, SignupType.FACEBOOK))
                     .body(UserDto.Response(user))
             }
 
             val email = userNameAndEmail["email"] as String
-            return if (userService.isAlreadyExists(email)) {
+            val user = userService.findByEmailAndSignupType(email, SignupType.FACEBOOK)
+            return if (user != null) {
                 ResponseEntity.status(HttpStatus.OK)
-                    .header("Authentication", jwtTokenProvider.generateToken(email))
-                    .body(UserDto.Response(userService.getUserByEmail(email)))
+                    .header("Authentication", jwtTokenProvider.generateToken(email, SignupType.FACEBOOK))
+                    .body(UserDto.Response(user))
             } else {
                 ResponseEntity.status(HttpStatus.CREATED)
-                    .header("Authentication", jwtTokenProvider.generateToken(email))
-                    .body(UserDto.Response(userService.getUserByEmail(email)))
+                    .header("Authentication", jwtTokenProvider.generateToken(email, SignupType.FACEBOOK))
+                    .body(UserDto.Response(userService.saveUserAndReturn(email, SignupType.FACEBOOK)))
             }
         } catch (e: AccessTokenException) {
             throw AccessTokenException("token is invalid")

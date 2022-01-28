@@ -10,6 +10,7 @@ class User(
     val email: String,
     val password: String? = null,
     var public: Boolean = true,
+    val signupType: SignupType,
 
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var follower: MutableSet<FollowerUser> = mutableSetOf(),
